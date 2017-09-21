@@ -1,0 +1,41 @@
+// stylize placeholders
+placeholderStyles(input)
+    {input}::-webkit-input-placeholder
+        {block}
+    {input}::-moz-placeholder
+        {block}
+    {input}:-ms-input-placeholder
+        {block}
+    {input}:-moz-placeholder
+        {block}
+
+// styles for IE9-11
+ieHACKs()
+    if block
+        @supports (-ms-ime-align:auto)
+            {block}
+        @media all and (-ms-high-contrast: none), (-ms-high-contrast: active)
+            {block}
+
+// set images for hight resolution
+mediaRatio(size)
+    @media (-webkit-min-device-pixel-ratio: 2), (min-resolution:192dpi)
+        background-size: size
+    if block
+        {block}
+
+// Mixin: Rem Calculator
+//
+// Calculates and returns the rem value based on px input. Default base font
+// size is 16px, but can be changed with base-font-size.
+//
+// ex       : rem(30px) or rem(30)
+// returns  : 1.875rem
+
+rem(value)
+    $baseFontSize ?= 16px
+    type = unit(value)
+    if type == px
+        return unit(value / $baseFontSize, 'rem')
+    else
+        return unit(value, type)

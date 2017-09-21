@@ -1,0 +1,20 @@
+include ../../default/pug/_mixins
+
+- var projectName = 'New Project'
+
+doctype html
+html(lang="ru")
+    block vars
+    head
+        title!= projectName + ' - ' + pageTitle
+        meta(charset="UTF-8")
+        meta(http-equiv='X-UA-Compatible', content='IE=edge')
+        meta(name='viewport', content='width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, maximum-scale=1.0')
+        link(rel="stylesheet", href="css/main.css")
+        //- script(src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyCBzo4x1AnloICpYAbRHsb8AOG1vtVzffw")
+        script(src="js/vendors.js")
+        script(src="js/main.js")
+    body.page
+        //- include ../style/sprite.svg
+        .wrapper
+            block body

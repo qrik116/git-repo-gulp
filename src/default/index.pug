@@ -1,0 +1,83 @@
+doctype
+html
+	head
+		title Разметка
+		meta(http-equiv="Content-Type", content="text/html; charset=UTF-8")
+		style.
+			body {
+				font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+				font-size: 14px;
+				line-height: 1.42857143;
+				color: #333;
+				background-color: #fff;
+			}
+			td, th {
+				padding: 0;
+			}
+			th {
+				text-align: left;
+			}
+			.container {
+				padding-right: 15px;
+				padding-left: 15px;
+				margin-right: auto;
+				margin-left: auto;
+			}
+			@media (min-width: 1200px){
+				.container {
+					width: 1170px;
+				}
+			}
+			@media (min-width: 992px){
+				.container {
+					width: 970px;
+				}
+			}
+			.table {
+				width: 100%;
+				max-width: 100%;
+				margin-bottom: 0;
+				border-spacing: 0;
+				border-collapse: collapse;
+			}
+			.table > tbody > tr > td,
+			.table > tbody > tr > th,
+			.table > tfoot > tr > td,
+			.table > tfoot > tr > th,
+			.table > thead > tr > td,
+			.table > thead > tr > th {
+				padding: 8px;
+				vertical-align: top;
+				border-top: 1px solid #ddd;
+			}
+			.table > caption + thead > tr:first-child > td,
+			.table > caption + thead > tr:first-child > th,
+			.table > colgroup + thead > tr:first-child > td,
+			.table > colgroup + thead > tr:first-child > th,
+			.table > thead:first-child > tr:first-child > td,
+			.table > thead:first-child > tr:first-child > th {
+				border-top: 0;
+			}
+			.table > thead > tr > th {
+				vertical-align: bottom;
+				border-bottom: 2px solid #ddd;
+			}
+	body
+		.container
+			table.table
+				thead
+					tr
+						th #
+						th Название страницы
+						th Ссылка
+				tbody
+					tr
+						th 0
+						td GUI
+						td
+							a(href="gui.html", target="_blank") gui.html
+					tr
+						th 1
+						td Главная страница
+						td
+							a(href="main.html", target="_blank") main.html

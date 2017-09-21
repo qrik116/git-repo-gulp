@@ -1,0 +1,78 @@
+//- Placeholder for images
+mixin phimage(width, height, bgColor)
+    if projectName
+        img(data-src="holder.js/" + width + "x" + height + "?bg=" + bgColor + "&auto=yes&text=" + projectName)&attributes(attributes)
+    else
+        img(data-src="holder.js/" + width + "x" + height + "?bg=" + bgColor + "&auto=yes")&attributes(attributes)
+
+//- Navigation
+//- @param items json [{title: "Главная", link: "main.html"}, ...]
+mixin navigation(className, items)
+    //- role="navigation"
+    nav(class=className)&attributes(attributes)
+        ul
+            each value, index in items
+                -var tabIndex =  index + 1
+                li
+                    if value.title == pageTitle
+                        a(aria-current="page" tabindex=tabIndex href=value.link title=value.title)!= value.title
+                    else
+                        a(tabindex=tabIndex href=value.link title=value.title)!= value.title
+
+//- SVG
+mixin icon(name,mod)
+    - mod = mod || ''
+    svg(class="icon icon-" + name + ' ' + mod)&attributes(attributes)
+        use(xlink:href="/images/sprite.svg#icon-" + name)
+
+mixin breadcrumbs(items)
+    .breadcrumbs
+        ol(itemscope itemtype="http://schema.org/BreadcrumbList")
+            each item, index in items
+                li(itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem")
+                    a(itemscope itemtype="http://schema.org/Thing" itemprop="item" href="#")
+                        span(itemprop="name")!= item
+                    meta(itemprop="position" content=index + 1)
+            li
+                span(itemprop="name")!= altPageTitle ? altPageTitle : pageTitle
+
+//- Form elements
+mixin formField(formName, id, label, inputType, ph)
+    .form_field
+        .form_field_name
+            label(for=formName + '-' + id)!= label
+        .form_field_input
+            if inputType === 'area'
+                textarea(id=formName + '-' + id name=id placeholder=ph)&attributes(attributes)
+            else
+                input(id=formName + '-' + id name=id type=inputType placeholder=ph value="")&attributes(attributes)
+
+mixin formFieldText(id, label, ph)
+    .form_field&attributes(attributes)
+        .form_field_name
+            label(for=id)!= label
+        .form_field_input
+            input(id=id name=id type="text" placeholder=ph value="")
+
+mixin formFieldFile(id, label)
+    .form_field&attributes(attributes)
+        .form_field_name
+            label(for=id)!= label
+        .form_field_input
+            input(id=id name=id type="file" value="")
+
+mixin formFieldArea(id, label, ph)
+    .form_field
+        .form_field_name
+            label(for=id)!= label
+        .form_field_input
+            textarea(id=id name=id placeholder=ph)
+
+mixin formFieldSelect(id, label, options)
+    .form_field&attributes(attributes)
+        .form_field_name
+            label(for=id)!= label
+        .form_field_input
+            select(id=id name=id)
+                each val, index in options
+                    option(value=index)!= val

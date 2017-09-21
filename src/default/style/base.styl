@@ -1,0 +1,132 @@
+html
+    height: 100%
+    f-default()
+
+body
+    @extend html
+    min-width 320px
+    background-color #fff
+    -webkit-overflow-scrolling touch
+    &.overlay-mob-active
+        @media(max-width $screen-xs-max)
+            overflow hidden !important
+
+#overlay-mob
+    @media(max-width $screen-xs-max)
+        position absolute
+        top 0
+        left 0
+        width 100%
+        height 100%
+        cursor pointer
+        background-color: #000
+        opacity .5
+        transition opacity .4s ease
+        z-index 350
+
+// max width for document
+.wrapper
+    min-height: 100%
+    position: relative
+    max-width 1920px
+    margin 0 auto
+    box-shadow: 0 0 30px rgba(#000, 12%)
+    font-size rem(18px)
+
+// box-shadow disable on safari
+input[type="text"]
+input[type="password"]
+input[type="email"]
+input[type="tel"]
+input[type="url"]
+textarea
+    -webkit-appearance: none
+    
+*, *:before, *:after
+    box-sizing: border-box
+
+// object-fit polyfill (for img)
+img
+    max-width 100%
+    &[data-object-fit="contain"]
+        object-fit: contain
+    &[data-object-fit="cover"]
+        object-fit: cover        
+.right
+    float right
+.left
+    float left
+    
+.flex
+    display flex
+    &_jc_sa
+        justify-content space-around
+    &_w-r
+        flex-flow wrap row
+    .order-1-to-2
+        order 1
+        @media(max-width $screen-xs-max)
+            order 2
+    .order-2-to-1
+        order 2
+        @media(max-width $screen-xs-max)
+            order 1
+    .as-fe
+        align-self flex-end
+    
+.__fl-n > div
+    float: none
+    display: inline-block
+    vertical-align: top
+    margin-right -3px
+        
+section, .section
+    padding-top 20px
+    padding-bottom 20px
+    &.no-p-t
+        padding-top 0
+        &-lg
+            @media(min-width $screen-lg-min)
+                padding-top 0
+        &-sm
+            @media(min-width $screen-sm-min) and (max-width $screen-sm-max)
+                padding-top 0
+        &-xs
+            @media(max-width $screen-xs-max)
+                padding-top 0
+    &.no-p-b
+        padding-bottom 0
+        &-sm
+            @media(min-width $screen-sm-min) and (max-width $screen-sm-max)
+                padding-bottom 0
+        &-xs
+            @media(max-width $screen-xs-max)
+                padding-bottom 0
+    &.no-p
+        padding 0
+        &-lg
+            @media(min-width $screen-lg-min)
+                padding 0
+        &-md
+            @media(min-width $screen-md-min)
+                padding 0
+        &-sm
+            @media(min-width $screen-sm-min) and (max-width $screen-sm-max)
+                padding 0
+        &-xs
+            @media(max-width $screen-xs-max)
+                padding 0
+    &.p-xs
+        padding 0
+        @media(max-width $screen-xs-max)
+            padding-top 20px
+            padding-bottom 20px
+    &.p-b-xs
+        padding-bottom 0
+        @media(max-width $screen-xs-max)
+            padding-bottom 20px
+    
+    &.__bd-mob
+        @media(max-width $screen-xs-max)
+            border-top 2px solid $color_1
+            border-bottom 2px solid $color_1

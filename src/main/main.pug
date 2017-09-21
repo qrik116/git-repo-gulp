@@ -1,0 +1,12 @@
+extends pug/layout.main.pug
+
+block vars
+    - var pageTitle = 'Главная'
+
+block body
+    include pug/header
+    .main(role="main")
+        h1!= pageTitle
+        img(src="./images/vader.jpg" alt="Vader")
+        +icon('vk')
+    include pug/footer

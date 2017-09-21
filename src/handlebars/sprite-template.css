@@ -1,0 +1,14 @@
+.icon {
+    display: inline-block;
+    vertical-align: top;
+    height: 1em;
+    width: 1em;
+    fill: inherit;
+    stroke: inherit;
+}
+<% _.forEach(svg, function(svgItem) { %>
+.<%=svgItem.name%> {
+    font-size: <%= svgItem.relHeight %>px;
+    width: <%= svgItem.relWidth/svgItem.relHeight %>em;
+}
+<% }); %>

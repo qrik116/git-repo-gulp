@@ -1,0 +1,10 @@
+iconCustomize(nameIcon, size, color = false)
+    .icon-{nameIcon}
+        font-size: size
+        if color
+            fill: color
+    if block
+        /#icon-{nameIcon}
+            {block}
+        /.icon-{nameIcon}
+            {block}

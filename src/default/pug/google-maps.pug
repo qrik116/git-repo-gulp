@@ -1,0 +1,48 @@
+script(type="text/javascript").
+    // init google map
+    function initialize() {
+        var e = window, a = 'inner';
+        if (!('innerWidth' in window )) {
+            a = 'client';
+            e = document.documentElement || document.body;
+        }
+        var myCenter = new google.maps.LatLng(60.0437437, 29.9676155);
+        var myLatlng = new google.maps.LatLng(60.0437437, 29.9785157);
+        var mapOptions = {
+            zoom: 15,
+            center: e[a + 'Width'] < 768 ? myLatlng : myCenter,
+            disableDefaultUI: true,
+            zoomControl: true,
+            scrollwheel: false,
+            navigationControl: false,
+            mapTypeControl: false,
+            scaleControl: false,
+            draggable: true,
+            zoomControlOptions: {
+                position: google.maps.ControlPosition.RIGHT_BOTTOM
+            }
+        };
+        var map = new google.maps.Map(document.getElementById('contacts-map'), mapOptions);
+        var image = 'images/Location_icon.png';
+        var beachMarker = new google.maps.Marker({
+            position: myLatlng,
+            map: map,
+            icon: image
+        });
+
+        google.maps.event.addDomListener(window, 'resize', function() {
+            var e = window, a = 'inner';
+            if (!('innerWidth' in window )) {
+                a = 'client';
+                e = document.documentElement || document.body;
+            }
+            if (map !== void 0) {
+                google.maps.event.trigger(map, "resize");
+                if (e[a + 'Width'] < 768) {
+                    return map.setCenter(myLatlng);
+                }
+                return map.setCenter(myCenter);
+            }
+        }.debounce(100));
+    }
+    google.maps.event.addDomListener(window, 'load', initialize);
