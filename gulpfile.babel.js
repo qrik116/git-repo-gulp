@@ -37,10 +37,10 @@ const path = {
         fonts: 'build/fonts/'
     },
     web: {
-        js: '',
-        css: '',
-        images: '',
-        fonts: ''
+        js: './',
+        css: './',
+        images: './',
+        fonts: './'
     },
     default: {
         src: {
