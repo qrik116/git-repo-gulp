@@ -8,9 +8,15 @@
 
 ## Run
 
+###develop
 ``` console
-    gulp default
-```    
+    npm run start || gulp || gulp default
+```
+
+###build
+``` console
+    npm run build || gulp build --build true
+```
 
 ## Dependencies:
 
