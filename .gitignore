@@ -4,6 +4,9 @@
 # netbeans project files
 nbproject
 
+# npm
+npm-debug.log
+
 # zend studio for eclipse project files
 .buildpath
 .project
