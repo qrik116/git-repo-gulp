@@ -1,0 +1,48 @@
+section, .section
+    padding-top 30px
+    padding-bottom 30px
+    @media(max-width $screen-xs-max)
+        padding-top 20px
+        padding-bottom 20px
+    &.no-p-t
+        padding-top 0
+        &-lg
+            @media(min-width $screen-lg-min)
+                padding-top 0
+        &-sm
+            @media(min-width $screen-sm-min) and (max-width $screen-sm-max)
+                padding-top 0
+        &-xs
+            @media(max-width $screen-xs-max)
+                padding-top 0
+    &.no-p-b
+        padding-bottom 0
+        &-sm
+            @media(min-width $screen-sm-min) and (max-width $screen-sm-max)
+                padding-bottom 0
+        &-xs
+            @media(max-width $screen-xs-max)
+                padding-bottom 0
+    &.no-p
+        padding 0
+        &-lg
+            @media(min-width $screen-lg-min)
+                padding 0
+        &-md
+            @media(min-width $screen-md-min)
+                padding 0
+        &-sm
+            @media(min-width $screen-sm-min) and (max-width $screen-sm-max)
+                padding 0
+        &-xs
+            @media(max-width $screen-xs-max)
+                padding 0
+    &.p-xs
+        padding 0
+        @media(max-width $screen-xs-max)
+            padding-top 20px
+            padding-bottom 20px
+    &.p-b-xs
+        padding-bottom 0
+        @media(max-width $screen-xs-max)
+            padding-bottom 20px

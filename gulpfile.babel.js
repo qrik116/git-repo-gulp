@@ -2,6 +2,7 @@ import gulp from 'gulp';
 import browserSync from 'browser-sync';
 import plumber from 'gulp-plumber';
 import gulpif from 'gulp-if';
+import babel from 'gulp-babel';
 
 import pug from 'gulp-pug';
 import stylus from 'gulp-stylus';
@@ -183,12 +184,25 @@ gulp.task('critical:style', () => {
         .pipe(reload({stream: true}));
 });
 gulp.task('critical:js', () => {
-    return gulp.src(path.critical.src.js)
-        .pipe(rigger())
-        .pipe(uglify())
-        .pipe(gulp.dest(path.build.js))
-        .pipe(gulpif(loadToWeb.critical.js, gulp.dest(path.web.js)))
-        .pipe(reload({stream: true}));
+    if (argv.build == 'true') {
+        return gulp.src(path.critical.src.js)
+            .pipe(rigger())
+            .pipe(babel({
+                presets: ['env']
+            }))
+            .pipe(uglify())
+            .pipe(gulp.dest(path.build.js))
+            .pipe(gulpif(loadToWeb.critical.js, gulp.dest(path.web.js)));
+    } else if (argv.build == 'false' || argv.build === undefined) {
+        return gulp.src(path.critical.src.js)
+            .pipe(rigger())
+            // .pipe(babel({
+            //     presets: ['env']
+            // }))
+            .pipe(gulp.dest(path.build.js))
+            .pipe(gulpif(loadToWeb.critical.js, gulp.dest(path.web.js)))
+            .pipe(reload({stream: true}));
+    }
 });
 gulp.task('critical:build',
     gulp.parallel(
@@ -291,12 +305,17 @@ gulp.task('main:style', () => {
 gulp.task('main:js', () => {
     if (argv.build == 'true') {
         return gulp.src(path.main.src.js)
+            .pipe(babel({
+                presets: ['env']
+            }))
             .pipe(uglify())
             .pipe(gulp.dest(path.build.js))
             .pipe(gulpif(loadToWeb.main.js, gulp.dest(path.web.js)))
-            .pipe(reload({stream: true}));
     } else if (argv.build == 'false' || argv.build === undefined) {
         return gulp.src(path.main.src.js)
+            // .pipe(babel({
+            //     presets: ['env']
+            // }))
             .pipe(gulp.dest(path.build.js))
             .pipe(gulpif(loadToWeb.main.js, gulp.dest(path.web.js)))
             .pipe(reload({stream: true}));
