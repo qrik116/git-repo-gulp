@@ -6,6 +6,7 @@ import babel from 'gulp-babel';
 
 import pug from 'gulp-pug';
 import stylus from 'gulp-stylus';
+import sourcemaps from 'gulp-sourcemaps';
 import prefixer from 'gulp-autoprefixer';
 import csso from 'gulp-csso';
 import uglify from 'gulp-uglify';
@@ -166,22 +167,42 @@ gulp.task('default:watch', () => {
 
 // Critical
 gulp.task('critical:style', () => {
-    return gulp.src(path.critical.src.style)
-        .pipe(plumber())
-        .pipe(stylus({
-            'include css': true
-        }))
-        .pipe(prefixer({browsers: ['last 3 versions']}))
-        // .pipe(urlAdjuster({
-        //     append: '?v=' + buildVersion
-        // }))
-        .pipe(csso({
-            restructure: false,
-            // sourceMap: true,
-            // debug: true
-        }))
-        .pipe(gulp.dest(path.build.css))
-        .pipe(reload({stream: true}));
+    if (argv.build == 'true') {
+        return gulp.src(path.critical.src.style)
+            .pipe(plumber())
+            .pipe(stylus({
+                'include css': true
+            }))
+            .pipe(prefixer({browsers: ['last 3 versions']}))
+            // .pipe(urlAdjuster({
+            //     append: '?v=' + buildVersion
+            // }))
+            .pipe(csso({
+                restructure: false,
+                // sourceMap: true,
+                // debug: true
+            }))
+            .pipe(gulp.dest(path.build.css))
+    } else if (argv.build == 'false' || argv.build === undefined) {
+        return gulp.src(path.critical.src.style)
+            .pipe(plumber())
+            .pipe(sourcemaps.init())
+            .pipe(stylus({
+                'include css': true
+            }))
+            .pipe(prefixer({browsers: ['last 3 versions']}))
+            // .pipe(urlAdjuster({
+            //     append: '?v=' + buildVersion
+            // }))
+            .pipe(csso({
+                restructure: false,
+                // sourceMap: true,
+                // debug: true
+            }))
+            .pipe(sourcemaps.write('.'))
+            .pipe(gulp.dest(path.build.css))
+            .pipe(reload({stream: true, match: '**/*.css'}));
+    }
 });
 gulp.task('critical:js', () => {
     if (argv.build == 'true') {
@@ -284,23 +305,44 @@ gulp.task('main:spriteSvg', () => {
         .pipe(gulp.dest(path.build.images));
 });
 gulp.task('main:style', () => {
-    return gulp.src(path.main.src.style)
-        .pipe(plumber())
-        .pipe(stylus({
-            'include css': true
-        }))
-        .pipe(prefixer({browsers: ['last 3 versions']}))
-        // .pipe(urlAdjuster({
-        //     append: '?v=' + buildVersion
-        // }))
-        .pipe(csso({
-            restructure: false,
-            // sourceMap: true,
-            // debug: true
-        }))
-        .pipe(gulp.dest(path.build.css))
-        .pipe(gulpif(loadToWeb.main.css, gulp.dest(path.web.css)))
-        .pipe(reload({stream: true}));
+    if (argv.build == 'true') {
+        return gulp.src(path.main.src.style)
+            .pipe(plumber())
+            .pipe(stylus({
+                'include css': true
+            }))
+            .pipe(prefixer({browsers: ['last 3 versions']}))
+            // .pipe(urlAdjuster({
+            //     append: '?v=' + buildVersion
+            // }))
+            .pipe(csso({
+                restructure: false,
+                // sourceMap: true,
+                // debug: true
+            }))
+            .pipe(gulp.dest(path.build.css))
+            .pipe(gulpif(loadToWeb.main.css, gulp.dest(path.web.css)))
+    } else if (argv.build == 'false' || argv.build === undefined) {
+        return gulp.src(path.main.src.style)
+            .pipe(plumber())
+            .pipe(sourcemaps.init())
+            .pipe(stylus({
+                'include css': true
+            }))
+            .pipe(prefixer({browsers: ['last 3 versions']}))
+            // .pipe(urlAdjuster({
+            //     append: '?v=' + buildVersion
+            // }))
+            .pipe(csso({
+                restructure: false,
+                // sourceMap: true,
+                // debug: true
+            }))
+            .pipe(sourcemaps.write('.'))
+            .pipe(gulp.dest(path.build.css))
+            .pipe(gulpif(loadToWeb.main.css, gulp.dest(path.web.css)))
+            .pipe(reload({stream: true, match: '**/*.css'}));
+    }
 });
 gulp.task('main:js', () => {
     if (argv.build == 'true') {
