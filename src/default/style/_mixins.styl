@@ -39,3 +39,11 @@ rem(value)
         return unit(value / $baseFontSize, 'rem')
     else
         return unit(value, type)
+
+setColor($color)
+    .text-color_{$color}
+        color lookup('$color_' + $color)
+    .svg-fill-color_{$color}
+        fill lookup('$color_' + $color)
+    .svg-stroke-color_{$color}
+        stroke lookup('$color_' + $color)

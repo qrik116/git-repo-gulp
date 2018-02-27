@@ -1,6 +1,7 @@
 include ../../default/pug/_mixins
 
 - var projectName = 'New Project'
+- var version = '0.0.0';
 
 doctype html
 html(lang="ru")
@@ -10,11 +11,18 @@ html(lang="ru")
         meta(charset="UTF-8")
         meta(http-equiv='X-UA-Compatible', content='IE=edge')
         meta(name='viewport', content='width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, maximum-scale=1.0')
-        link(rel="stylesheet", href="css/main.css")
+        link(rel="stylesheet" href="css/critical.css" inline)
+        //- script(src="js/critical.js" inline)
         //- script(src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyCBzo4x1AnloICpYAbRHsb8AOG1vtVzffw")
-        script(src="js/vendors.js")
-        script(src="js/main.js")
+        link(rel="icon" type="image/png" sizes="16x16" href="./images/favicon/favicon.ico")
+        link(rel="apple-touch-icon" sizes="180x180" href="./images/favicon/apple-touch-icon.png" )
+        link(rel="icon" type="image/png" sizes="32x32" href="./images/favicon/favicon-16x16.png")
+        link(rel="icon" type="image/png" sizes="32x32" href="./images/favicon/favicon-32x32.png")
+        link(rel="mask-icon" href="./images/favicon/safari-pinned-tab.svg" color="#a90f3d")
     body.page
-        //- include ../style/sprite.svg
+        include ../style/sprite.svg
         .wrapper
             block body
+        link(rel="stylesheet" href="css/main.css?v="+version)
+        script(src="js/vendors.js?v="+version defer)
+        script(src="js/main.js?v="+version defer)

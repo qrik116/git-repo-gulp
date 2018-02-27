@@ -1,0 +1,62 @@
+setColor('black-10')
+
+a
+    text-decoration: underline
+    outline: none
+    transition color 0.2s ease-in-out
+    color inherit
+    &:hover,
+    &:focus
+        transition-duration 0s
+        text-decoration: none
+
+img
+    pointer-events none
+    user-select none
+    
+p
+    margin 1em 0
+    
+.f-bold
+    font-weight 700
+.f-medium
+    font-weight 500
+.f-normal
+    font-weight 400
+
+h1
+    font-size rem(50px)
+    font-weight 700
+    margin .4em 0
+    line-height 1.25
+    @media(max-width $screen-sm-max)
+        font-size rem(35px)
+    @media(max-width $screen-xs-max)
+        margin .6em 0
+
+.h1
+    @extend h1
+    
+h2, .h2
+    font-size rem(40px)
+    font-weight 700
+    margin .3em 0
+    line-height 1.25
+    @media(max-width $screen-sm-max)
+        font-size rem(30px)
+    @media(max-width $screen-xs-max)
+        margin .5em 0
+
+h3, .h3
+    font-size rem(30px)
+    font-weight 700
+    margin .6em 0
+    @media(max-width $screen-sm-max)
+        font-size rem(25px)
+    @media(max-width $screen-xs-max)
+        margin .7em 0
+    
+h4, .h4
+    font-size rem(20px)
+    font-weight 700
+    margin .6em 0

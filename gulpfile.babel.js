@@ -19,6 +19,10 @@ import cache from 'gulp-cache';
 import rigger from 'gulp-rigger';
 import urlAdjuster from 'gulp-css-url-adjuster';
 
+import inlinesource from 'gulp-inline-source';
+
+import {argv} from 'yargs';
+
 let buildVersion = (new Date()).getTime();
 
 //reloads the browser
@@ -76,6 +80,16 @@ const path = {
             js: 'src/main/js/*.js'
         }
     },
+    critical: {
+        src: {
+            style: 'src/critical/style/critical.styl',
+            js: 'src/critical/js/critical.js'
+        },
+        watch: {
+            style: 'src/critical/style/**/*.styl',
+            js: 'src/critical/js/critical.js'
+        }
+    },
     clean: './build'
 };
 
@@ -89,6 +103,10 @@ const loadToWeb = {
         css: false,
         sprite: false,
         js: false
+    },
+    critical: {
+        js: false,
+        css: false
     }
 };
 
@@ -116,7 +134,7 @@ gulp.task('default:jsVendors', () => {
 });
 gulp.task('default:images', () => {
     return gulp.src(path.default.src.images)
-        .pipe(cache(image()))
+        // .pipe(cache(image()))
         .pipe(gulp.dest(path.build.images))
         .pipe(gulpif(loadToWeb.default.images, gulp.dest(path.web.images)))
         .pipe(reload({stream: true}));
@@ -136,6 +154,7 @@ gulp.task('default:build',
 );
 gulp.task('default:watch', () => {
     gulp.watch(path.default.watch.jsVendors, gulp.series('default:jsVendors'));
+    gulp.watch([path.critical.watch.style, path.default.watch.style], gulp.series('critical:style'));
 
     // use if you have little images
     gulp.watch([path.default.watch.images], gulp.series('default:images'));
@@ -144,12 +163,60 @@ gulp.task('default:watch', () => {
     gulp.watch([path.default.watch.html], gulp.parallel('default:html-watch'));
 });
 
+// Critical
+gulp.task('critical:style', () => {
+    return gulp.src(path.critical.src.style)
+        .pipe(plumber())
+        .pipe(stylus({
+            'include css': true
+        }))
+        .pipe(prefixer({browsers: ['last 3 versions']}))
+        // .pipe(urlAdjuster({
+        //     append: '?v=' + buildVersion
+        // }))
+        .pipe(csso({
+            restructure: false,
+            // sourceMap: true,
+            // debug: true
+        }))
+        .pipe(gulp.dest(path.build.css))
+        .pipe(reload({stream: true}));
+});
+gulp.task('critical:js', () => {
+    return gulp.src(path.critical.src.js)
+        .pipe(rigger())
+        .pipe(uglify())
+        .pipe(gulp.dest(path.build.js))
+        .pipe(gulpif(loadToWeb.critical.js, gulp.dest(path.web.js)))
+        .pipe(reload({stream: true}));
+});
+gulp.task('critical:build',
+    gulp.parallel(
+        'critical:style',
+        'critical:js'
+    )
+);
+gulp.task('critical:watch', () => {
+    gulp.watch(path.critical.watch.js, gulp.series('critical:js'));
+    gulp.watch([path.critical.watch.style], gulp.series('critical:style'));
+});
+
 // Main site
 gulp.task('main:html', () => {
-    return gulp.src(path.main.src.html)
-        .pipe(plumber())
-        .pipe(pug({pretty: true}))
-        .pipe(gulp.dest(path.build.html));
+    if (argv.build == 'true') {
+        return gulp.src(path.main.src.html)
+            .pipe(plumber())
+            .pipe(pug({pretty: false}))
+            .pipe(inlinesource({
+                rootpath: 'build/'
+            }))
+            .pipe(gulp.dest(path.build.html));
+    } else if (argv.build == 'false' || argv.build === undefined) {
+        return gulp.src(path.main.src.html)
+            .pipe(plumber())
+            .pipe(pug({pretty: true}))
+            .pipe(gulp.dest(path.build.html));
+    }
 });
 gulp.task('main:html-watch', (done) => {
     return gulp.series(
@@ -162,9 +229,10 @@ gulp.task('main:spriteSvg', () => {
         .pipe(svgmin())
         .pipe(cheerio({
             run: ($) => {
-                $('[fill]').removeAttr('fill');
-                $('[style]').removeAttr('style');
+            //     $('[fill]').removeAttr('fill');
+            //     $('[style]').removeAttr('style');
                 $('style').remove();
+                $('[class]').removeAttr('class');
             },
             parserOptions: {xmlMode: true}
         }))
@@ -208,9 +276,9 @@ gulp.task('main:style', () => {
             'include css': true
         }))
         .pipe(prefixer({browsers: ['last 3 versions']}))
-        .pipe(urlAdjuster({
-            append: '?v=' + buildVersion
-        }))
+        // .pipe(urlAdjuster({
+        //     append: '?v=' + buildVersion
+        // }))
         .pipe(csso({
             restructure: false,
             // sourceMap: true,
@@ -221,10 +289,18 @@ gulp.task('main:style', () => {
         .pipe(reload({stream: true}));
 });
 gulp.task('main:js', () => {
-    return gulp.src(path.main.src.js)
-        .pipe(gulp.dest(path.build.js))
-        .pipe(gulpif(loadToWeb.main.js, gulp.dest(path.web.js)))
-        .pipe(reload({stream: true}));
+    if (argv.build == 'true') {
+        return gulp.src(path.main.src.js)
+            .pipe(uglify())
+            .pipe(gulp.dest(path.build.js))
+            .pipe(gulpif(loadToWeb.main.js, gulp.dest(path.web.js)))
+            .pipe(reload({stream: true}));
+    } else if (argv.build == 'false' || argv.build === undefined) {
+        return gulp.src(path.main.src.js)
+            .pipe(gulp.dest(path.build.js))
+            .pipe(gulpif(loadToWeb.main.js, gulp.dest(path.web.js)))
+            .pipe(reload({stream: true}));
+    }
 });
 gulp.task('main:build',
     gulp.series(
@@ -250,6 +326,7 @@ gulp.task('main:watch', () => {
 gulp.task('build',
     gulp.series(
         'default:build',
+        'critical:build',
         'main:build'
     )
 );
@@ -276,6 +353,7 @@ gulp.task('webserver', () => {
 gulp.task('watch',
     gulp.parallel(
         'default:watch',
+        'critical:watch',
         'main:watch'
     )
 );

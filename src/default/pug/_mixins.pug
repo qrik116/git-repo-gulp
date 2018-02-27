@@ -23,7 +23,7 @@ mixin navigation(className, items)
 mixin icon(name,mod)
     - mod = mod || ''
     svg(class="icon icon-" + name + ' ' + mod)&attributes(attributes)
-        use(xlink:href="/images/sprite.svg#icon-" + name)
+        use(xlink:href="#icon-" + name)
 
 mixin breadcrumbs(items)
     .breadcrumbs
