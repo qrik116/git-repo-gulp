@@ -6,12 +6,15 @@ block vars
 block body
     include pug/header
     .main(role="main")
-        h1!= pageTitle
-        h2!= pageTitle
-        h3!= pageTitle
-        h4!= pageTitle
-        div
-            img(src="./images/vader.jpg" alt="Vader")
-        div
-            +icon('vk')
+        .container
+            h1!= pageTitle
+            h2!= pageTitle
+            h3!= pageTitle
+            h4!= pageTitle
+            div
+                img(src="./images/vader.jpg" alt="Vader")
+            div
+                +icon('vk')
+            section.no-p-t-lg
+                h1!= pageTitle
     include pug/footer
