@@ -347,6 +347,7 @@ gulp.task('main:style', () => {
 gulp.task('main:js', () => {
     if (argv.build == 'true') {
         return gulp.src(path.main.src.js)
+            .pipe(plumber())
             .pipe(babel({
                 presets: ['env']
             }))
@@ -355,6 +356,7 @@ gulp.task('main:js', () => {
             .pipe(gulpif(loadToWeb.main.js, gulp.dest(path.web.js)))
     } else if (argv.build == 'false' || argv.build === undefined) {
         return gulp.src(path.main.src.js)
+            .pipe(plumber())
             // .pipe(babel({
             //     presets: ['env']
             // }))
