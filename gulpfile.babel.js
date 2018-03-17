@@ -357,9 +357,9 @@ gulp.task('main:js', () => {
     } else if (argv.build == 'false' || argv.build === undefined) {
         return gulp.src(path.main.src.js)
             .pipe(plumber())
-            // .pipe(babel({
-            //     presets: ['env']
-            // }))
+            .pipe(babel({
+                presets: ['env']
+            }))
             .pipe(gulp.dest(path.build.js))
             .pipe(gulpif(loadToWeb.main.js, gulp.dest(path.web.js)))
             .pipe(reload({stream: true}));
