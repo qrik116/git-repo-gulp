@@ -10,6 +10,7 @@ import sourcemaps from 'gulp-sourcemaps';
 import prefixer from 'gulp-autoprefixer';
 import csso from 'gulp-csso';
 import uglify from 'gulp-uglify';
+import filter from 'gulp-filter';
 
 import image from 'gulp-image';
 import svgSprite from 'gulp-svg-sprite';
@@ -24,6 +25,7 @@ import urlAdjuster from 'gulp-css-url-adjuster';
 import inlinesource from 'gulp-inline-source';
 
 import {argv} from 'yargs';
+import getPathsTree from './config/pug-path-tree';
 
 let buildVersion = (new Date()).getTime();
 
@@ -237,6 +239,11 @@ gulp.task('critical:watch', () => {
 });
 
 // Main site
+if (argv.build == 'false' || argv.build === undefined) {
+    // complete trees
+    var changedTplFile = null;
+    var pathsTree = getPathsTree(path.main.src.html);
+}
 gulp.task('main:html', () => {
     if (argv.build == 'true') {
         return gulp.src(path.main.src.html)
@@ -249,6 +256,23 @@ gulp.task('main:html', () => {
     } else if (argv.build == 'false' || argv.build === undefined) {
         return gulp.src(path.main.src.html)
             .pipe(plumber())
+            .pipe(filter((file) => {
+                // Если имя изменившегося файла есть в зависимостях страницы, то пропускаем
+                // страницу дальше в поток, попутно выводя сообщение в консоль для контроля
+                if (changedTplFile) {
+                    const changed = changedTplFile;
+                    // console.log(changed);
+                    // console.log(pathsTree);
+                    if (pathsTree[file.relative].indexOf(changed) != -1) {
+                        // console.log(file.relative);
+                        console.log('>> ' + `Compiling: ${file.relative}`);
+                        return true;
+                    }
+                }
+    
+                // Иначе отбрасываем страницу
+                return false;
+            }))
             .pipe(pug({pretty: true}))
             .pipe(gulp.dest(path.build.html));
     }
@@ -379,7 +403,11 @@ gulp.task('main:watch', () => {
     gulp.watch([path.main.watch.sprite, path.default.watch.sprite], gulp.series('main:sprite'));
     gulp.watch([path.main.watch.style, path.default.watch.style], gulp.series('main:style'));
     gulp.watch([path.main.watch.js], gulp.series('main:js'));
-    gulp.watch([path.main.watch.html], gulp.series('main:html-watch'));
+    gulp.watch([path.main.watch.html], gulp.series('main:html-watch'))
+        .on('all', (event, path) => {
+            // Получаем имя файла и записываем его в глобальную переменную
+            changedTplFile = path.replace(/[\\\/]/g, '/').replace(/src\/main\//, '');
+        });
 });
 
 gulp.task('build',
