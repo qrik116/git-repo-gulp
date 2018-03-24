@@ -6,6 +6,7 @@ nbproject
 
 # npm
 npm-debug.log
+package-lock.json
 
 # zend studio for eclipse project files
 .buildpath
