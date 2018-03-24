@@ -152,3 +152,27 @@ if (!NodeList.addEventListener) {
         }
     })
 }
+
+/*
+ * Element offset
+ * Определение смещения
+ *
+ * @return type (object)
+ *  - Возвращает объект с длинами
+ *
+ */
+if (!Element.offset) {
+    Object.defineProperty(Element.prototype, 'offset', {
+        enumerable: true,
+        configurable: true,
+        writable: true,
+        value: function () {
+            var rect = this.getBoundingClientRect();
+            return {
+                top: rect.top + document.body.scrollTop,
+                left: rect.left + document.body.scrollLeft
+            }
+        }
+    })
+}
+

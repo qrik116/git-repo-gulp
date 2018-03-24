@@ -11,8 +11,12 @@ block body
             h2!= pageTitle
             h3!= pageTitle
             h4!= pageTitle
-            div
-                img(src="./images/vader.jpg" alt="Vader")
+
+            - for (var i = 0; i < 2; i++) {
+                div
+                    img(src data-src="./images/vader"+i+".jpg" alt="Vader")
+            - }
+
             div
                 +icon('vk')
     include pug/footer

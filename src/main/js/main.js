@@ -60,12 +60,16 @@ if ('objectFit' in document.documentElement.style === false) {
 
 // }(window, document));
 
-installVendor('./js/vendors.js', function() {
+installVendor('./js/vendors.js', () => {
 
-    svg4everybody();
+svg4everybody();
 
-    DOMLoad(() => {
-        
+DOMLoad(() => {
+
+    installVendor('js/LazyLoadImg.js', () => {
+        LazyLoadImg('img[data-src]');
     });
+
+});
 
 });
