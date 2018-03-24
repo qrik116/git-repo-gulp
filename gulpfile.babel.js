@@ -316,9 +316,7 @@ gulp.task('main:style', () => {
             //     append: '?v=' + buildVersion
             // }))
             .pipe(csso({
-                restructure: false,
-                // sourceMap: true,
-                // debug: true
+                restructure: false
             }))
             .pipe(gulp.dest(path.build.css))
             .pipe(gulpif(loadToWeb.main.css, gulp.dest(path.web.css)))
@@ -334,9 +332,7 @@ gulp.task('main:style', () => {
             //     append: '?v=' + buildVersion
             // }))
             .pipe(csso({
-                restructure: false,
-                // sourceMap: true,
-                // debug: true
+                restructure: false
             }))
             .pipe(sourcemaps.write('.'))
             .pipe(gulp.dest(path.build.css))

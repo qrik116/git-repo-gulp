@@ -59,14 +59,13 @@ if ('objectFit' in document.documentElement.style === false) {
 //     }
 
 // }(window, document));
-svg4everybody();
 
-(function ready(fn, d) {
-    if (d.attachEvent ? d.readyState === "complete" : d.readyState !== "loading"){
-        fn();
-    } else {
-        d.addEventListener('DOMContentLoaded', fn);
-    }
-})(() => {
+installVendor('./js/vendors.js', function() {
 
-}, document);
+    svg4everybody();
+
+    DOMLoad(() => {
+        
+    });
+
+});
