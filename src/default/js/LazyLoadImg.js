@@ -1,5 +1,5 @@
 /**
- * LazyLoadImg v0.1.0
+ * LazyLoadImg v0.2.0
  * Copyright 2018 Evgeniy Kozirev
  *
  * Ленивая загрузка изображений. На данный момент реализована загрузка по расстоянию.
@@ -8,7 +8,7 @@
  */
 
 
-'use strict';
+;'use strict';
 
 (function (factory) {
     if (typeof define === 'function' && define.amd) {
@@ -50,19 +50,61 @@
     }
 }));
 
-
+/**
+ * @param type (string, jquery object)
+ *  - селектор
+ *
+ * @param type (object)
+ *  - набор опций:
+ *      #debug (bollean)
+ *        - Отображение информации о загрузке
+ *      #mode (string): 
+ *        - 'ondemand' (default) — загрузка изображения по требованию
+ *        - 'progressive' — загрузка изображений фоном по очереди
+ *      #offsetStartLoad (number): 0 (default) 
+ *        - сдвиг, чтобы загрузить изображение раньше
+ *      #initLoad (function): false (default) 
+ *        - callback, при старте загрузки изображения из набора
+ *      #afterLoad (function): false (default) 
+ *        - callback, при окончании загрузки изображения из набора
+ *      #fullLoading (function): false (default) 
+ *        - callback, при окончании загрузки всех изображений
+ *
+ * @return type (NodeList)
+ *  - набор всех элементов
+ *
+ */
 function LazyLoadImg(selector, options) {
 
-    var _document = document,
-        ERROR_MESSAGE = 'Невозможно обработать переданный селектор, используйте текстовый селектор или ' +
-         'jquery.';
+    var MESSAGES = {
+        typeError: 'Невозможно обработать переданный селектор, используйте текстовый селектор или ' +
+         'jquery.',
+        initLoad: 'Начало загрузки >> ',
+        afterLoad: 'Завершение загрузки >> ',
+        fullLoading: 'Загрузка всех изображений завершена.'
+    };
+    var DEBUGERS = {
+        initLoad: function (item) {
+            console.log(MESSAGES.initLoad, item || '');
+        },
+        afterLoad: function (item) {
+            console.log(MESSAGES.afterLoad, item || '');
+        },
+        fullLoading: function () {
+            console.log(MESSAGES.fullLoading);
+        }
+    };
 
     var options = Object.assign({}, {
-        offsetStartLoad: 0, // сдвиг, чтобы загрузить изображение раньше
-        initLoad: false,
-        afterLoad: false,
-        fullLoading: false
-    }, options || {}),
+        debug: false,
+        mode: 'ondemand',
+        offsetStartLoad: 0,
+        initLoad: null,
+        afterLoad: null,
+        fullLoading: null
+    }, options || {});
+
+    var _document = document,
         elements = [],
         arrImg = [];
 
@@ -83,7 +125,7 @@ function LazyLoadImg(selector, options) {
             break;
 
         default:
-            throw new TypeError(ERROR_MESSAGE); // <--- Не соответствие типу данных
+            throw new TypeError(MESSAGES.typeError); // <--- Не соответствие типу данных
             break;
     }
 
@@ -91,18 +133,25 @@ function LazyLoadImg(selector, options) {
         if (elements.length) {
             initialArrImg();
 
-            loadImg();
-            window.addEventListener('scroll', function() {
-                loadImg();
-            });
-
-            checkFullLoadingImg();
+            // обработка режима загрузки
+            switch(options.mode) {
+                case 'ondemand':
+                    loadImgOndemand();
+                    window.addEventListener('scroll', function() {
+                        loadImgOndemand();
+                    });
+                    break;
+                case 'progressive':
+                    loadImgProgressive();
+                    break;
+            }
         }
     }
 
     function initialArrImg () {
         arrImg = Array.prototype.map.call(elements, function(item, i) {
             return {
+                id: i,
                 offset: item.offset(),
                 imgDOM: item,
                 load: false,
@@ -111,41 +160,49 @@ function LazyLoadImg(selector, options) {
         });
     }
 
-    function loadImg() {
+    function loadImgOndemand() {
         var scrollTop = window.pageYOffset;
-        var offsetWindow = scrollTop + window.innerHeight,
-            offsetStartLoad = 100; // сдвиг, чтобы начать грузить раньше
+        var offsetWindow = scrollTop + window.innerHeight;
+
         arrImg.forEach(function(item) {
             if ((offsetWindow) >= item.offset.top - options.offsetStartLoad) {
-                if (!item.load) {
-                    item.imgDOM.setAttribute('src', item.imgDOM.getAttribute('data-src'));
-                    if (options.initLoad) 
-                        options.initLoad.call(item.imgDOM); // <----- начало загрузки
-                    item.imgDOM.setAttribute('data-src', '');
-                    item.load = true;
-                    item.imgDOM.addEventListener('load', function() { // фиксация полной загрузки
-                        item.fullLoading = true;
-                        if (options.afterLoad) options.afterLoad.call(item.imgDOM); // <----- конец загрузки
-                    });
-                }
+                loadImg(item); // загрузка изображения
             }
         });
     }
 
-    function checkFullLoadingImg() { // Проверка на полную загрузку всех изображений, которые попали в список
-
-        if (typeof options.fullLoading === 'function') {
-            var timerid = setInterval(function() {
-                var check = false;
-                arrImg.forEach(function(item) {
-                    check = item.fullLoading;
-                });
-                if (check) {
-                    options.fullLoading();
-                    clearInterval(timerid);
-                }
-            }, 500);
+    function loadImgProgressive(count) {
+        count = typeof count === 'number' ? count : 0;
+        if (count < arrImg.length) {
+            loadImg(arrImg[count]).addEventListener('load', function onloadprogressive() {
+                loadImgProgressive(++count);
+                this.removeEventListener('load', onloadprogressive);
+            });
         }
+    }
+
+    function loadImg(item) { // загрузка изображения
+        if (!item.load) {
+            clearImage(item);
+            item.load = true;
+            if (options.debug) DEBUGERS.initLoad(item.imgDOM); // <----- начало загрузки
+            if (typeof options.initLoad === 'function') options.initLoad.call(item.imgDOM); 
+            item.imgDOM.addEventListener('load', function() { // фиксация полной загрузки
+                item.fullLoading = true;
+                if (options.debug) DEBUGERS.afterLoad(item.imgDOM); // <----- конец загрузки
+                if (typeof options.afterLoad === 'function') options.afterLoad.call(item.imgDOM); 
+                if (arrImg[arrImg.length-1].fullLoading && item.id == arrImg.length-1) { // <----- конец загрузки всех изображений
+                    if (options.debug) DEBUGERS.fullLoading();
+                    if (typeof options.fullLoading === 'function') options.fullLoading();
+                }
+            });
+        }
+        return item.imgDOM;
+    }
+
+    function clearImage(item) { // очистка изображения от лишних атрибутов
+        item.imgDOM.setAttribute('src', item.imgDOM.getAttribute('data-src'));
+        item.imgDOM.removeAttribute('data-src');
     }
 
     init();
@@ -156,29 +213,21 @@ function LazyLoadImg(selector, options) {
 /******************************** E X A M P L E ********************************/
 
 // document.addEventListener('DOMContentLoaded', function() {
-//     $('img[data-src]').LazyLoadImg({
+//     var options = {
+//         mode: 'ondemand',
 //         offsetStartLoad: 300,
 //         initLoad: function() {
-//             console.log('Начало загрузки >> ', this);
-//         },
-//         afterLoad: function() {
-//             console.log('Завершение загрузки >>', this);
-//         },
-//         fullLoading: function() {
-//             console.log('Загрузка изображений завершена');
-//         }
-//     });
 
-//     LazyLoadImg('img[data-src]', {
-//         offsetStartLoad: 300,
-//         initLoad: function() {
-//             console.log('Начало загрузки >> ', this);
 //         },
 //         afterLoad: function() {
-//             console.log('Завершение загрузки >>', this);
+
 //         },
 //         fullLoading: function() {
-//             console.log('Загрузка изображений завершена');
+
 //         }
-//     });
+//     }
+
+//     $('img[data-src]').LazyLoadImg(options);
+
+//     LazyLoadImg('img[data-src]', options);
 // })
