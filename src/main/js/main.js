@@ -66,10 +66,14 @@ svg4everybody();
 
 DOMLoad(() => {
 
-    installVendor('js/LazyLoadImg.js', () => {
-        LazyLoadImg('img[data-src]');
-    });
+
 
 });
 
+});
+
+WinLoad(() => {
+    installVendor('js/LazyLoadImg.js', () => {
+        LazyLoadImg('img[data-src]');
+    });
 });

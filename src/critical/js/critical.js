@@ -50,3 +50,7 @@ function DOMLoad(fn) {
         document.addEventListener('DOMContentLoaded', fn);
     }
 }
+
+function WinLoad(fn) {
+    window.addEventListener('load', fn);
+}
