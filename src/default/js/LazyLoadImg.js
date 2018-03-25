@@ -2,11 +2,13 @@
  * LazyLoadImg v0.2.0
  * Copyright 2018 Evgeniy Kozirev
  *
- * Ленивая загрузка изображений. На данный момент реализована загрузка по расстоянию.
- * Пример ожно посмотреть в конце.
+ * Ленивая загрузка изображений.
+ * Реализованно 2 режима работы:
+ *  - 'ondemand' (default) — загрузка изображения по требованию
+ *  - 'progressive' — загрузка изображений фоном по очереди
+ * Пример можно посмотреть в конце.
  *
  */
-
 
 ;'use strict';
 
@@ -151,7 +153,6 @@ function LazyLoadImg(selector, options) {
     function initialArrImg () {
         arrImg = Array.prototype.map.call(elements, function(item, i) {
             return {
-                id: i,
                 offset: item.offset(),
                 imgDOM: item,
                 load: false,
@@ -191,7 +192,10 @@ function LazyLoadImg(selector, options) {
                 item.fullLoading = true;
                 if (options.debug) DEBUGERS.afterLoad(item.imgDOM); // <----- конец загрузки
                 if (typeof options.afterLoad === 'function') options.afterLoad.call(item.imgDOM); 
-                if (arrImg[arrImg.length-1].fullLoading && item.id == arrImg.length-1) { // <----- конец загрузки всех изображений
+                var _check = arrImg.every(function(item) {
+                    return item.fullLoading;
+                });
+                if (_check) { // <----- конец загрузки всех изображений
                     if (options.debug) DEBUGERS.fullLoading();
                     if (typeof options.fullLoading === 'function') options.fullLoading();
                 }
@@ -212,7 +216,7 @@ function LazyLoadImg(selector, options) {
 
 /******************************** E X A M P L E ********************************/
 
-// document.addEventListener('DOMContentLoaded', function() {
+// document.addEventListener('DOMContentLoaded', function() { // or window.addEventListener('load')
 //     var options = {
 //         mode: 'ondemand',
 //         offsetStartLoad: 300,
