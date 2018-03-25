@@ -1,5 +1,5 @@
 html
-    height 100%
+    min-height 100%
     f-default()
 
 body
@@ -7,22 +7,6 @@ body
     min-width 320px
     background-color #fff
     -webkit-overflow-scrolling touch
-    &.overlay-mob-active
-        @media(max-width $screen-xs-max)
-            overflow hidden !important
-
-#overlay-mob
-    @media(max-width $screen-xs-max)
-        position absolute
-        top 0
-        left 0
-        width 100%
-        height 100%
-        cursor pointer
-        background-color #000
-        opacity .5
-        transition opacity .4s ease
-        z-index 350
 
 // max width for document
 .wrapper
@@ -44,38 +28,3 @@ textarea
     
 *, *:before, *:after
     box-sizing border-box
-
-// object-fit polyfill (for img)
-img
-    max-width 100%
-    &[data-object-fit="contain"]
-        object-fit contain
-    &[data-object-fit="cover"]
-        object-fit cover        
-.right
-    float right
-.left
-    float left
-    
-.flex
-    display flex
-    &_jc_sa
-        justify-content space-around
-    &_w-r
-        flex-flow wrap row
-    .order-1-to-2
-        order 1
-        @media(max-width $screen-xs-max)
-            order 2
-    .order-2-to-1
-        order 2
-        @media(max-width $screen-xs-max)
-            order 1
-    .as-fe
-        align-self flex-end
-    
-.__fl-n > div
-    float none
-    display inline-block
-    vertical-align top
-    margin-right -3px

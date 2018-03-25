@@ -54,8 +54,8 @@ const path = {
         src: {
             html: 'src/default/*.pug',
             sprite: 'src/default/sprite/**/*.svg',
-            js: ['src/default/js/*.js', '!src/default/js/vendors.js'],
-            jsVendors: 'src/default/js/vendors.js',
+            js: ['src/default/js/*.js', '!src/default/js/vendors.js',],
+            jsVendors: ['src/default/js/vendors.js', 'src/default/js/LazyLoadImg.js'],
             images: 'src/default/images/**/*.*',
             fonts: 'src/default/fonts/**/*.*'
         },
