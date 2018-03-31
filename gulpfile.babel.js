@@ -242,7 +242,6 @@ gulp.task('critical:watch', () => {
 if (argv.build == 'false' || argv.build === undefined) {
     // complete trees
     var changedTplFile = null;
-    var pathsTree = getPathsTree(path.main.src.html);
 }
 gulp.task('main:html', () => {
     if (argv.build == 'true') {
@@ -254,6 +253,7 @@ gulp.task('main:html', () => {
             }))
             .pipe(gulp.dest(path.build.html));
     } else if (argv.build == 'false' || argv.build === undefined) {
+        var pathsTree = getPathsTree(path.main.src.html);
         return gulp.src(path.main.src.html)
             .pipe(plumber())
             .pipe(filter((file) => {

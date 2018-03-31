@@ -66,8 +66,6 @@ svg4everybody();
 
 DOMLoad(() => {
 
-
-
 });
 
 });

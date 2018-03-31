@@ -5,7 +5,7 @@
  *  - Ассинхронная загрузка зависимостей, после которых можно выполнить callback - функцию
  *    или подписаться на событие 'vendorinstall', которое срабатывает после загрузки.
  *
- * @param type (string)
+ * @param type (string|array)
  *  - путь к зависимости
  *
  * @param type (function)
@@ -17,14 +17,29 @@
  */
 function installVendor(vendor, fn) {
 
-    var vendorScript = document.createElement('script');
-    vendorScript.src = vendor;
-    vendorScript.onload = function() {
-        if (typeof fn === 'function')
-            fn();
-        EventLoad(vendorScript);
-    };
-    document.body.appendChild(vendorScript);
+    if (vendor.forEach) {
+        vendor.forEach(function(el, i, arr) {
+            var vendorScript = document.createElement('script');
+            vendorScript.src = el;
+            if (i == arr.length) {
+                vendorScript.onload = function() {
+                    if (typeof fn === 'function')
+                        fn();
+                    EventLoad(vendorScript);
+                };
+            }
+            document.body.appendChild(vendorScript);
+        });
+    } else {
+        var vendorScript = document.createElement('script');
+        vendorScript.src = vendor;
+        vendorScript.onload = function() {
+            if (typeof fn === 'function')
+                fn();
+            EventLoad(vendorScript);
+        };
+        document.body.appendChild(vendorScript);
+    }
 
     function EventLoad(el) {
         try {
