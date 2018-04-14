@@ -71,3 +71,23 @@ function DOMLoad(fn) {
 function WinLoad(fn) {
     window.addEventListener('load', fn);
 }
+
+DOMLoad(() => {
+
+    let _document = document;
+
+    // Ассинхронная загрузка стилей
+    (styleFiles => {
+        if (styleFiles && styleFiles.length) {
+            Array.prototype.forEach.call(styleFiles, styleFile => {
+                let vendorCss = document.createElement('link');
+                vendorCss.rel = 'stylesheet';
+                vendorCss.href = styleFile.getAttribute('asynccss');
+                _document.head.insertBefore(vendorCss, styleFile);
+                _document.head.removeChild(styleFile.nextElementSibling);
+                _document.head.removeChild(styleFile);
+            });
+        }
+    })(_document.head.querySelectorAll('script[asynccss]'));
+
+});

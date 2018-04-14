@@ -1,3 +1,9 @@
+//- IncludeCssFiles
+mixin includeCss(fileSrc)
+    script(asynccss=fileSrc)
+    noscript
+        link(rel="stylesheet" href=fileSrc)
+
 //- Placeholder for images
 mixin phimage(width, height, bgColor)
     if projectName
