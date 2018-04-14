@@ -27,6 +27,11 @@ import inlinesource from 'gulp-inline-source';
 import {argv} from 'yargs';
 import getPathsTree from './config/pug-path-tree';
 
+import browserify from 'browserify';
+import babelify from 'babelify';
+import source from 'vinyl-source-stream';
+import streamify from 'gulp-streamify';
+
 let buildVersion = (new Date()).getTime();
 
 //reloads the browser
@@ -75,13 +80,15 @@ const path = {
             style: 'src/main/style/**/main.styl',
             sprite: 'src/main/sprite/**/*.svg',
             styles: 'src/main/style/',
-            js: 'src/main/js/main.js'
+            js: 'src/main/js/main.js',
+            jsx: 'src/main/jsx/main.jsx'
         },
         watch: {
             html: 'src/main/**/*.pug',
             sprite: 'src/main/sprite/**/*.svg',
             style: 'src/main/style/**/*.styl',
-            js: 'src/main/js/*.js'
+            js: 'src/main/js/*.js',
+            jsx: 'src/main/jsx/**/*.jsx'
         }
     },
     critical: {
@@ -364,6 +371,52 @@ gulp.task('main:style', () => {
             .pipe(reload({stream: true, match: '**/*.css'}));
     }
 });
+
+gulp.task('main:jsx', () => {
+    if (argv.build == 'true') {
+        process.env.NODE_ENV = 'production';
+        return browserify({
+            entries: path.main.src.jsx,
+            extensions: ['.jsx'],
+            debug : false
+        })
+        .transform('babelify', {
+            presets: ['env', 'react'],
+            plugins: ['transform-class-properties', 'transform-decorators-legacy'],
+            ignore: /\/node_modules\/(?!app\/)/
+        })
+        .bundle()
+        .on('error', function(err){
+            console.log('[browserify error]');
+            console.log(err.message);
+            this.emit('end');
+        })
+        .pipe(source('inreact.js'))
+        .pipe(streamify(uglify()))
+        .pipe(gulp.dest(path.build.js));
+    } else if (argv.build == 'false' || argv.build === undefined) {
+        // process.env.NODE_ENV = 'production';
+        return browserify({
+            entries: path.main.src.jsx,
+            extensions: ['.jsx'],
+            debug : false
+        })
+        .transform('babelify', {
+            presets: ['env', 'react'],
+            ignore: /\/node_modules\/(?!app\/)/
+        })
+        .bundle()
+        .on('error', function(err){
+            console.log('[browserify error]');
+            console.log(err.message);
+            this.emit('end');
+        })
+        .pipe(source('inreact.js'))
+        // .pipe(streamify(uglify()))
+        .pipe(gulp.dest(path.build.js))
+        .pipe(reload({stream: true}));
+    }
+});
 gulp.task('main:js', () => {
     if (argv.build == 'true') {
         return gulp.src(path.main.src.js)
@@ -390,7 +443,8 @@ gulp.task('main:build',
         'main:spriteSvg',
         'main:html',
         'main:style',
-        'main:js'
+        'main:js',
+        'main:jsx'
     )
 );
 gulp.task('main:sprite',
@@ -403,6 +457,7 @@ gulp.task('main:watch', () => {
     gulp.watch([path.main.watch.sprite, path.default.watch.sprite], gulp.series('main:sprite'));
     gulp.watch([path.main.watch.style, path.default.watch.style], gulp.series('main:style'));
     gulp.watch([path.main.watch.js], gulp.series('main:js'));
+    gulp.watch([path.main.watch.jsx], gulp.series('main:jsx'));
     gulp.watch([path.main.watch.html], gulp.series('main:html-watch'))
         .on('all', (event, path) => {
             // Получаем имя файла и записываем его в глобальную переменную

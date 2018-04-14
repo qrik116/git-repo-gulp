@@ -71,6 +71,7 @@ DOMLoad(() => {
 });
 
 WinLoad(() => {
+    installVendor('js/inreact.js');
     installVendor('js/LazyLoadImg.js', () => {
         LazyLoadImg('img[data-src]');
     });
