@@ -20,6 +20,7 @@ function installVendor(vendor, fn) {
     if (vendor.forEach) {
         vendor.forEach(function(el, i, arr) {
             var vendorScript = document.createElement('script');
+            vendorScript.type = "text/javascript";
             vendorScript.src = el;
             if (i == arr.length) {
                 vendorScript.onload = function() {
@@ -28,17 +29,18 @@ function installVendor(vendor, fn) {
                     EventLoad(vendorScript);
                 };
             }
-            document.body.appendChild(vendorScript);
+            document.head.appendChild(vendorScript);
         });
     } else {
         var vendorScript = document.createElement('script');
+        vendorScript.type = "text/javascript";
         vendorScript.src = vendor;
         vendorScript.onload = function() {
             if (typeof fn === 'function')
                 fn();
             EventLoad(vendorScript);
         };
-        document.body.appendChild(vendorScript);
+        document.head.appendChild(vendorScript);
     }
 
     function EventLoad(el) {

@@ -12,14 +12,14 @@ html(lang="ru")
         meta(http-equiv='X-UA-Compatible', content='IE=edge')
         meta(name='viewport', content='width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, maximum-scale=1.0')
         include _meta-description
+        include _favicon
         link(rel="stylesheet" href="css/main.css?v="+version)
         link(rel="stylesheet" href="css/critical.css" inline)
         script(src="js/critical.js" inline)
-        //- script(src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyCBzo4x1AnloICpYAbRHsb8AOG1vtVzffw")
-        include _favicon
+        script(type="text/javascript" src="js/main.js?v="+version async defer)
+        //- script(src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyCBzo4x1AnloICpYAbRHsb8AOG1vtVzffw" asycn defer)
     body.page
         include ../style/sprite.svg
         .wrapper
             block body
         //- script(src="js/vendors.js?v="+version)
-        script(src="js/main.js?v="+version async)
