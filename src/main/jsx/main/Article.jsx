@@ -7,8 +7,7 @@ class Article extends Component {
 
         this.state = {
             title: this.props.title || '',
-            authorName: this.props.authorName || '',
-            text: this.props.text || ''
+            authorName: this.props.authorName || ''
         }
     }
 
@@ -17,7 +16,7 @@ class Article extends Component {
             <article>
                 {this.state.title ? <h3 className="title">{this.state.title}</h3> : ''}
                 <h4 className="author">Автор: {this.state.authorName}</h4>
-                <p className="text">{this.state.text}</p>
+                <p className="text">{this.props.children}</p>
             </article>
         );
     }

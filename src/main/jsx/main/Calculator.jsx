@@ -45,6 +45,7 @@ class Calculator extends Component {
         }
     }
 
+
     calculate(operation, arg1, arg2) {
         let value = 0;
         switch (operation) {

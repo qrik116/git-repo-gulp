@@ -4,6 +4,7 @@ import Article from './main/Article';
 import HelloWorld from './main/HelloWorld';
 import ContactList from './main/Contact';
 import { Calculator } from './main/Calculator';
+import AppNotes from './main/AppNotes';
 
 let _root = document.getElementById('root'),
     _linkStyle = {
@@ -69,9 +70,9 @@ if (_root) {
                 </a>
                 <Article
                     title="Статья про жизнь"
-                    authorName="Евген"
-                    text="Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto magnam vitae harum voluptate dolorem, alias obcaecati quas. Ipsa non, laudantium, aliquid nesciunt debitis fugiat facere suscipit, libero inventore et natus."
-                />
+                    authorName="Евген">
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto magnam vitae harum voluptate dolorem, alias obcaecati quas. Ipsa non, laudantium, aliquid nesciunt debitis fugiat facere suscipit, libero inventore et natus.
+                </Article>
             </section>
 
             <section id="issue2">
@@ -103,6 +104,24 @@ if (_root) {
                     Задание 4: Простой калькулятор
                 </a>
                 <Calculator />
+            </section>
+
+            <hr style={{
+                height: '1px',
+                backgroundColor: '#cecece',
+                margin: '15px 0',
+                display: 'block',
+                border: 'none'
+            }}/>
+
+            <section id="issue5">
+                <a 
+                    className="h3"
+                    href="#issue5"
+                    style={_linkStyle}>
+                    Задание 5: Заметки, реализация. Сделать выбор цвета для заметки
+                </a>
+                <AppNotes />
             </section>
             
         </div>, 
