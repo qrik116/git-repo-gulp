@@ -60,15 +60,15 @@ if ('objectFit' in document.documentElement.style === false) {
 
 // }(window, document));
 
-installVendor('js/vendors.js', () => {
+// installVendor('js/vendors.js', () => {
 
-svg4everybody();
+// svg4everybody();
 
-DOMLoad(() => {
+// DOMLoad(() => {
 
-});
+// });
 
-});
+// });
 
 WinLoad(() => {
     installVendor('js/inreact.js');
