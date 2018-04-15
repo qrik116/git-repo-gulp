@@ -14,7 +14,6 @@ class Note extends Component {
     }
 
     render() {
-        console.log(true);
         return (
             <div 
                 style={{
