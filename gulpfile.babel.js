@@ -28,6 +28,7 @@ import {argv} from 'yargs';
 import getPathsTree from './config/pug-path-tree';
 
 import browserify from 'browserify';
+import bra from 'browserify-require-async';
 import babelify from 'babelify';
 import source from 'vinyl-source-stream';
 import streamify from 'gulp-streamify';
@@ -380,11 +381,7 @@ gulp.task('main:jsx', () => {
             extensions: ['.jsx'],
             debug : false
         })
-        .transform('babelify', {
-            presets: ['env', 'react'],
-            plugins: ['transform-class-properties', 'transform-decorators-legacy'],
-            ignore: /\/node_modules\/(?!app\/)/
-        })
+        .transform('babelify')
         .bundle()
         .on('error', function(err){
             console.log('[browserify error]');
@@ -401,9 +398,10 @@ gulp.task('main:jsx', () => {
             extensions: ['.jsx'],
             debug : false
         })
-        .transform('babelify', {
-            presets: ['env', 'react'],
-            ignore: /\/node_modules\/(?!app\/)/
+        .transform('babelify')
+        .transform('browserify-require-async', {
+            outputDir: path.build.js,
+            extensions: ['.jsx']
         })
         .bundle()
         .on('error', function(err){

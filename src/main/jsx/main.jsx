@@ -57,6 +57,16 @@ let _root = document.getElementById('root'),
           color: grey;
         }`;
 
+import(__dirname + '/main/Article.jsx').then(Article => {
+    console.log(Article);
+    // render(
+    //     <Article>
+    //         sadsadas
+    //     </Article>,
+    //     _root
+    // )
+}).catch('Error');
+
 if (_root) {
     render(
         <div>
