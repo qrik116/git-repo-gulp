@@ -45,14 +45,14 @@ module.exports = {
                 }
             })
         ],
-        // splitChunks: {
-        //     cacheGroups: {
-        //         commons: {
-        //             test: /[\\/]node_modules[\\/]/,
-        //             name: "vendorsReact",
-        //             chunks: "all"
-        //         }
-        //     }
-        // }
+        splitChunks: {
+            cacheGroups: {
+                commons: {
+                    test: /[\\/]node_modules[\\/]/,
+                    name: "vendorsReact",
+                    chunks: "all"
+                }
+            }
+        }
     }
 };
