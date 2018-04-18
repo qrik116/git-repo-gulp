@@ -1,21 +1,23 @@
 'use strict';
 
-const webpack  = require('webpack');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const webpack  = require('webpack'),
+    UglifyJsPlugin = require('uglifyjs-webpack-plugin'),
+    path = require('path');
+    const NODE_ENV = process.env.NODE_ENV ? process.env.NODE_ENV.trim() : 'development'; // trim для удаления лишних пробелов, если платформа Windows
 
 module.exports = {
     entry: {
-        scripts: __dirname + '/src/main/jsx/main.jsx'
+        ['main-react']: path.join(__dirname, '/src/main/jsx/main.jsx')
     },
     output: {
-        path: __dirname + '/build/',
+        path: path.join(__dirname, '/build/'),
         filename: 'js/[name].js',
         chunkFilename: 'js/[name].bundle.js'
     },
     module: {
         rules: [
             {
-                test: /.jsx?$/,
+                test: /\.jsx?$/,
                 loader: 'babel-loader',
                 exclude: /node_modules/,
             }
@@ -46,11 +48,13 @@ module.exports = {
             })
         ],
         splitChunks: {
+            name: true,
+            automaticNameDelimiter: "-",
             cacheGroups: {
-                commons: {
+                vendors: {
                     test: /[\\/]node_modules[\\/]/,
-                    name: "vendorsReact",
-                    chunks: "all"
+                    name: 'vendors',
+                    chunks: "all",
                 }
             }
         }

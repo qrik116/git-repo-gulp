@@ -33,6 +33,10 @@ import babelify from 'babelify';
 import source from 'vinyl-source-stream';
 import streamify from 'gulp-streamify';
 
+import webpack from 'webpack';
+import gutil from'gulp-util';
+const webpackConfig = require('./webpack.config.js');
+
 let buildVersion = (new Date()).getTime();
 
 //reloads the browser
@@ -373,47 +377,74 @@ gulp.task('main:style', () => {
     }
 });
 
-gulp.task('main:jsx', () => {
+gulp.task('main:jsx', (done) => {
     if (argv.build == 'true') {
-        process.env.NODE_ENV = 'production';
-        return browserify({
-            entries: path.main.src.jsx,
-            extensions: ['.jsx'],
-            debug : false
-        })
-        .transform('babelify')
-        .bundle()
-        .on('error', function(err){
-            console.log('[browserify error]');
-            console.log(err.message);
-            this.emit('end');
-        })
-        .pipe(source('inreact.js'))
-        .pipe(streamify(uglify()))
-        .pipe(gulp.dest(path.build.js));
+        webpack(webpackConfig);
+        done();
     } else if (argv.build == 'false' || argv.build === undefined) {
-        // process.env.NODE_ENV = 'production';
-        return browserify({
-            entries: path.main.src.jsx,
-            extensions: ['.jsx'],
-            debug : false
-        })
-        .transform('babelify')
-        .transform('browserify-require-async', {
-            outputDir: path.build.js,
-            extensions: ['.jsx']
-        })
-        .bundle()
-        .on('error', function(err){
-            console.log('[browserify error]');
-            console.log(err.message);
-            this.emit('end');
-        })
-        .pipe(source('inreact.js'))
-        // .pipe(streamify(uglify()))
-        .pipe(gulp.dest(path.build.js))
-        .pipe(reload({stream: true}));
+        webpack(webpackConfig, onComplete);
+        function onComplete(error, stats) {
+            if (error) { // кажется еще не сталкивался с этой ошибкой
+                onError(error);
+            } else if ( stats.hasErrors() ) { // ошибки в самой сборке, к примеру "не удалось найти модуль по заданному пути"
+                onError( stats.toString(statsLog) );
+            } else {
+                onSuccess( stats.toString(statsLog) );
+            }
+        }
+        function onError(error) {
+            let formatedError = new gutil.PluginError('webpack', error);
+            notifier.notify({ // чисто чтобы сразу узнать об ошибке
+                title: `Error: ${formatedError.plugin}`,
+                message: formatedError.message
+            });
+            done(formatedError);
+        }
+        function onSuccess(detailInfo) {
+            gutil.log('[webpack]', detailInfo);
+            done();
+        }
     }
+    // if (argv.build == 'true') {
+    //     process.env.NODE_ENV = 'production';
+    //     return browserify({
+    //         entries: path.main.src.jsx,
+    //         extensions: ['.jsx'],
+    //         debug : false
+    //     })
+    //     .transform('babelify')
+    //     .bundle()
+    //     .on('error', function(err){
+    //         console.log('[browserify error]');
+    //         console.log(err.message);
+    //         this.emit('end');
+    //     })
+    //     .pipe(source('inreact.js'))
+    //     .pipe(streamify(uglify()))
+    //     .pipe(gulp.dest(path.build.js));
+    // } else if (argv.build == 'false' || argv.build === undefined) {
+    //     // process.env.NODE_ENV = 'production';
+    //     return browserify({
+    //         entries: path.main.src.jsx,
+    //         extensions: ['.jsx'],
+    //         debug : false
+    //     })
+    //     .transform('babelify')
+    //     .transform('browserify-require-async', {
+    //         outputDir: path.build.js,
+    //         extensions: ['.jsx']
+    //     })
+    //     .bundle()
+    //     .on('error', function(err){
+    //         console.log('[browserify error]');
+    //         console.log(err.message);
+    //         this.emit('end');
+    //     })
+    //     .pipe(source('inreact.js'))
+    //     // .pipe(streamify(uglify()))
+    //     .pipe(gulp.dest(path.build.js))
+    //     .pipe(reload({stream: true}));
+    // }
 });
 gulp.task('main:js', () => {
     if (argv.build == 'true') {

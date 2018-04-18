@@ -71,8 +71,8 @@ if ('objectFit' in document.documentElement.style === false) {
 // });
 
 WinLoad(() => {
-    installVendor('js/vendorsReact.bundle.js', () => {
-        installVendor('js/scripts.js');
+    installVendor('js/vendors.bundle.js', () => {
+        installVendor('js/main-react.js');
     });
     installVendor('js/LazyLoadImg.js', () => {
         LazyLoadImg('img[data-src]');

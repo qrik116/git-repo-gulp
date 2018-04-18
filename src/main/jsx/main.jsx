@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
-// import Article from './main/Article';
 import HelloWorld from './main/HelloWorld';
 import ContactList from './main/Contact';
 import { Calculator } from './main/Calculator';
@@ -63,28 +62,24 @@ class Root extends Component {
 
         this.articleRef = null;
         this.state = {
-            article: null
+            article: null,
+            testUpdate: 2
         }
     }
 
     componentDidMount() {
         setTimeout(() => {
-            import(__dirname + '/main/Article.jsx').then(Article => {
-                Article = Article.default;
+            import(__dirname + '/main/Article.jsx').then(component => {
                 this.setState({
-                    article: 
-                        <Article
-                            title="Статья про жизнь"
-                            authorName="Евген"
-                            ref={i => this.articleRef = i}>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto magnam vitae harum voluptate dolorem, alias obcaecati quas. Ipsa non, laudantium, aliquid nesciunt debitis fugiat facere suscipit, libero inventore et natus.
-                        </Article>
-                });
+                    article: component.default
+                })
             });
-        }, 2000);
+        }, 500);
     }
 
     render() {
+        const Article = this.state.article;
+
         return (
             <div>
 
@@ -96,7 +91,15 @@ class Root extends Component {
                         Задание 1: Сделать компонент для отображения статьи
                     </a>
                     {
-                        this.state.article || ''
+                        Article ?
+                        <Article
+                            title="Статья про жизнь"
+                            authorName="Евген"
+                            ref={i => this.articleRef = i}>
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto magnam vitae harum voluptate dolorem, alias obcaecati quas. Ipsa non, laudantium, aliquid nesciunt debitis fugiat facere suscipit, libero inventore et natus.
+                        </Article>
+                        :
+                        ''
                     }
                 </section>
 
