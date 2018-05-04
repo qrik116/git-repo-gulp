@@ -3,6 +3,7 @@ import browserSync from 'browser-sync';
 import plumber from 'gulp-plumber';
 import gulpif from 'gulp-if';
 import babel from 'gulp-babel';
+import PluginError from 'plugin-error';
 
 import pug from 'gulp-pug';
 import stylus from 'gulp-stylus';
@@ -20,11 +21,9 @@ import replace from 'gulp-replace';
 import cache from 'gulp-cache';
 
 import rigger from 'gulp-rigger';
-import urlAdjuster from 'gulp-css-url-adjuster';
 
 import inlinesource from 'gulp-inline-source';
 
-import {argv} from 'yargs';
 import getPathsTree from './config/pug-path-tree';
 
 import browserify from 'browserify';
@@ -34,8 +33,14 @@ import source from 'vinyl-source-stream';
 import streamify from 'gulp-streamify';
 
 import webpack from 'webpack';
-import gutil from'gulp-util';
+import log from 'fancy-log';
+
 const webpackConfig = require('./webpack.config.js');
+const statsLog = { // для красивых логов в консоли
+    colors: true,
+    reasons: true
+};
+const NODE_ENV = process.env.NODE_ENV ? process.env.NODE_ENV.trim() : 'development'; // trim для удаления лишних пробелов, если платформа Windows
 
 let buildVersion = (new Date()).getTime();
 
@@ -181,23 +186,20 @@ gulp.task('default:watch', () => {
 
 // Critical
 gulp.task('critical:style', () => {
-    if (argv.build == 'true') {
+    if (NODE_ENV == 'production') {
         return gulp.src(path.critical.src.style)
             .pipe(plumber())
             .pipe(stylus({
                 'include css': true
             }))
             .pipe(prefixer({browsers: ['last 3 versions']}))
-            // .pipe(urlAdjuster({
-            //     append: '?v=' + buildVersion
-            // }))
             .pipe(csso({
                 restructure: false,
                 // sourceMap: true,
                 // debug: true
             }))
             .pipe(gulp.dest(path.build.css))
-    } else if (argv.build == 'false' || argv.build === undefined) {
+    } else if (NODE_ENV == 'development') {
         return gulp.src(path.critical.src.style)
             .pipe(plumber())
             .pipe(sourcemaps.init())
@@ -205,9 +207,6 @@ gulp.task('critical:style', () => {
                 'include css': true
             }))
             .pipe(prefixer({browsers: ['last 3 versions']}))
-            // .pipe(urlAdjuster({
-            //     append: '?v=' + buildVersion
-            // }))
             .pipe(csso({
                 restructure: false,
                 // sourceMap: true,
@@ -219,7 +218,7 @@ gulp.task('critical:style', () => {
     }
 });
 gulp.task('critical:js', () => {
-    if (argv.build == 'true') {
+    if (NODE_ENV == 'production') {
         return gulp.src(path.critical.src.js)
             .pipe(rigger())
             .pipe(babel({
@@ -228,7 +227,7 @@ gulp.task('critical:js', () => {
             .pipe(uglify())
             .pipe(gulp.dest(path.build.js))
             .pipe(gulpif(loadToWeb.critical.js, gulp.dest(path.web.js)));
-    } else if (argv.build == 'false' || argv.build === undefined) {
+    } else if (NODE_ENV == 'development') {
         return gulp.src(path.critical.src.js)
             .pipe(rigger())
             // .pipe(babel({
@@ -251,12 +250,12 @@ gulp.task('critical:watch', () => {
 });
 
 // Main site
-if (argv.build == 'false' || argv.build === undefined) {
+if (NODE_ENV == 'development') {
     // complete trees
     var changedTplFile = null;
 }
 gulp.task('main:html', () => {
-    if (argv.build == 'true') {
+    if (NODE_ENV == 'production') {
         return gulp.src(path.main.src.html)
             .pipe(plumber())
             .pipe(pug({pretty: false}))
@@ -264,7 +263,7 @@ gulp.task('main:html', () => {
                 rootpath: 'build/'
             }))
             .pipe(gulp.dest(path.build.html));
-    } else if (argv.build == 'false' || argv.build === undefined) {
+    } else if (NODE_ENV == 'development') {
         var pathsTree = getPathsTree(path.main.src.html);
         return gulp.src(path.main.src.html)
             .pipe(plumber())
@@ -341,22 +340,19 @@ gulp.task('main:spriteSvg', () => {
         .pipe(gulp.dest(path.build.images));
 });
 gulp.task('main:style', () => {
-    if (argv.build == 'true') {
+    if (NODE_ENV == 'production') {
         return gulp.src(path.main.src.style)
             .pipe(plumber())
             .pipe(stylus({
                 'include css': true
             }))
             .pipe(prefixer({browsers: ['last 3 versions']}))
-            // .pipe(urlAdjuster({
-            //     append: '?v=' + buildVersion
-            // }))
             .pipe(csso({
                 restructure: false
             }))
             .pipe(gulp.dest(path.build.css))
             .pipe(gulpif(loadToWeb.main.css, gulp.dest(path.web.css)))
-    } else if (argv.build == 'false' || argv.build === undefined) {
+    } else if (NODE_ENV == 'development') {
         return gulp.src(path.main.src.style)
             .pipe(plumber())
             .pipe(sourcemaps.init())
@@ -364,9 +360,6 @@ gulp.task('main:style', () => {
                 'include css': true
             }))
             .pipe(prefixer({browsers: ['last 3 versions']}))
-            // .pipe(urlAdjuster({
-            //     append: '?v=' + buildVersion
-            // }))
             .pipe(csso({
                 restructure: false
             }))
@@ -378,76 +371,34 @@ gulp.task('main:style', () => {
 });
 
 gulp.task('main:jsx', (done) => {
-    if (argv.build == 'true') {
-        webpack(webpackConfig);
-        done();
-    } else if (argv.build == 'false' || argv.build === undefined) {
-        webpack(webpackConfig, onComplete);
-        function onComplete(error, stats) {
-            if (error) { // кажется еще не сталкивался с этой ошибкой
-                onError(error);
-            } else if ( stats.hasErrors() ) { // ошибки в самой сборке, к примеру "не удалось найти модуль по заданному пути"
-                onError( stats.toString(statsLog) );
-            } else {
-                onSuccess( stats.toString(statsLog) );
-            }
-        }
-        function onError(error) {
-            let formatedError = new gutil.PluginError('webpack', error);
-            notifier.notify({ // чисто чтобы сразу узнать об ошибке
-                title: `Error: ${formatedError.plugin}`,
-                message: formatedError.message
-            });
-            done(formatedError);
-        }
-        function onSuccess(detailInfo) {
-            gutil.log('[webpack]', detailInfo);
-            done();
+    webpack(webpackConfig, onComplete);
+    function onComplete(error, stats) {
+        if (error) { // кажется еще не сталкивался с этой ошибкой
+            onError(error);
+        } else if ( stats.hasErrors() ) { // ошибки в самой сборке, к примеру "не удалось найти модуль по заданному пути"
+            onError(stats.toString(statsLog));
+        } else {
+            onSuccess(stats.toString(statsLog));
         }
     }
-    // if (argv.build == 'true') {
-    //     process.env.NODE_ENV = 'production';
-    //     return browserify({
-    //         entries: path.main.src.jsx,
-    //         extensions: ['.jsx'],
-    //         debug : false
-    //     })
-    //     .transform('babelify')
-    //     .bundle()
-    //     .on('error', function(err){
-    //         console.log('[browserify error]');
-    //         console.log(err.message);
-    //         this.emit('end');
-    //     })
-    //     .pipe(source('inreact.js'))
-    //     .pipe(streamify(uglify()))
-    //     .pipe(gulp.dest(path.build.js));
-    // } else if (argv.build == 'false' || argv.build === undefined) {
-    //     // process.env.NODE_ENV = 'production';
-    //     return browserify({
-    //         entries: path.main.src.jsx,
-    //         extensions: ['.jsx'],
-    //         debug : false
-    //     })
-    //     .transform('babelify')
-    //     .transform('browserify-require-async', {
-    //         outputDir: path.build.js,
-    //         extensions: ['.jsx']
-    //     })
-    //     .bundle()
-    //     .on('error', function(err){
-    //         console.log('[browserify error]');
-    //         console.log(err.message);
-    //         this.emit('end');
-    //     })
-    //     .pipe(source('inreact.js'))
-    //     // .pipe(streamify(uglify()))
-    //     .pipe(gulp.dest(path.build.js))
-    //     .pipe(reload({stream: true}));
-    // }
+    function onError(error) {
+        let formatedError = new PluginError('webpack', error);
+        notifier.notify({ // чисто чтобы сразу узнать об ошибке
+            title: `Error: ${formatedError.plugin}`,
+            message: formatedError.message
+        });
+        done(formatedError);
+    }
+    function onSuccess(detailInfo) {
+        if (NODE_ENV == 'development') {
+            log('[webpack]', detailInfo);
+            reload();
+        }
+        done();
+    }
 });
 gulp.task('main:js', () => {
-    if (argv.build == 'true') {
+    if (NODE_ENV == 'production') {
         return gulp.src(path.main.src.js)
             .pipe(plumber())
             .pipe(babel({
@@ -456,7 +407,7 @@ gulp.task('main:js', () => {
             .pipe(uglify())
             .pipe(gulp.dest(path.build.js))
             .pipe(gulpif(loadToWeb.main.js, gulp.dest(path.web.js)))
-    } else if (argv.build == 'false' || argv.build === undefined) {
+    } else if (NODE_ENV == 'development') {
         return gulp.src(path.main.src.js)
             .pipe(plumber())
             .pipe(babel({

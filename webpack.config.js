@@ -6,6 +6,7 @@ const webpack  = require('webpack'),
     const NODE_ENV = process.env.NODE_ENV ? process.env.NODE_ENV.trim() : 'development'; // trim для удаления лишних пробелов, если платформа Windows
 
 module.exports = {
+    mode: NODE_ENV,
     entry: {
         ['main-react']: path.join(__dirname, '/src/main/jsx/main.jsx')
     },
