@@ -100,6 +100,33 @@ if (!Element.addClass) {
 }
 
 /*
+ * NodeList addClass
+ *
+ * @param type (string)
+ *  - className
+ *
+ * @return type (Element)
+ *  - Возвращает элементы, которому был(и) добавлен(ы) класс(ы)
+ *
+ */
+if (!NodeList.addClass) {
+    Object.defineProperty(NodeList.prototype, 'addClass', {
+        enumerable: true,
+        configurable: true,
+        writable: true,
+        value: function (className) {
+            Array.prototype.forEach.call(this, function(item) {
+                if (item.classList)
+                    item.classList.add(className);
+                else
+                    item.className += ' ' + className;
+            });
+            return this;
+        }
+    })
+}
+
+/*
  * Element removeClass
  *
  * @param type (string)
@@ -120,6 +147,33 @@ if (!Element.removeClass) {
             else
                 this.className = this.className.replace(new RegExp('(^|\\s)(' + className.split(' ').join('|') + ')(\\s|$)', 'gi'), '');
 
+            return this;
+        }
+    })
+}
+
+/*
+ * NodeList removeClass
+ *
+ * @param type (string)
+ *  - className
+ *
+ * @return type (Element)
+ *  - Возвращает элементы, в котором был(и) удален(ы) класс(ы)
+ *
+ */
+if (!NodeList.removeClass) {
+    Object.defineProperty(NodeList.prototype, 'removeClass', {
+        enumerable: true,
+        configurable: true,
+        writable: true,
+        value: function (className) {
+            Array.prototype.forEach.call(this, function(item) {
+                if (item.classList)
+                    item.classList.remove(className);
+                else
+                    item.className = this.className.replace(new RegExp('(^|\\s)(' + className.split(' ').join('|') + ')(\\s|$)', 'gi'), '');
+            });
             return this;
         }
     })
@@ -169,8 +223,8 @@ if (!Element.offset) {
         value: function () {
             var rect = this.getBoundingClientRect();
             return {
-                top: rect.top + document.body.scrollTop,
-                left: rect.left + document.body.scrollLeft
+                top: rect.top + (window.pageYOffset || document.body.scrollTop),
+                left: rect.left + (window.pageYOffset || document.body.scrollLeft)
             }
         }
     })
