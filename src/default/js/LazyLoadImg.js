@@ -13,27 +13,9 @@
 ;'use strict';
 
 (function (factory) {
-    if (typeof define === 'function' && define.amd) {
-        // AMD. Register as an anonymous module.
-        define(['lazyloadimg'], factory);
-    } else if (typeof module === 'object' && module.exports) {
+    if (typeof module === 'object' && module.exports) {
         // Node/CommonJS
-        module.exports = function( root, LazyLoadImg ) {
-            if ( LazyLoadImg === undefined ) {
-                // require('jQuery') returns a factory that requires window to
-                // build a jQuery instance, we normalize how we use modules
-                // that require this pattern but the window provided is a noop
-                // if it's defined (how jquery works)
-                if ( typeof window !== 'undefined' ) {
-                    LazyLoadImg = require('lazyloadimg');
-                }
-                else {
-                    LazyLoadImg = require('lazyloadimg')(root);
-                }
-            }
-            factory(LazyLoadImg);
-            return LazyLoadImg;
-        };
+        module.exports = LazyLoadImg;
     } else {
         // Browser globals
         factory(LazyLoadImg);
@@ -41,14 +23,16 @@
 }(function (fn) {
     LazyLoadImg = fn;
     if (typeof jQuery !== 'undefined') {
-        $.fn.extend({
-            LazyLoadImg: function(_options, _fn) {
-                if (this.length) {
-                    fn(this, _options, _fn);
+        if (!(LazyLoadImg in $.fn)) {
+            $.fn.extend({
+                LazyLoadImg: function(_options, _fn) {
+                    if (this.length) {
+                        fn(this, _options, _fn);
+                    }
+                    return this;
                 }
-                return this;
-            }
-        });
+            });
+        }
     }
 }));
 
