@@ -3,7 +3,7 @@
  * Copyright 2018 Evgeniy Kozirev
  */
 
-/*
+/**
  * Polifyll Objec.assign
  *
  * @param type (object)
@@ -48,7 +48,7 @@ if (!Object.assign) {
     });
 }
 
-/*
+/**
  * Element hasClass
  *
  * @param type (string)
@@ -73,7 +73,7 @@ if (!Element.hasClass) {
     })
 }
 
-/*
+/**
  * Element addClass
  *
  * @param type (string)
@@ -99,7 +99,7 @@ if (!Element.addClass) {
     })
 }
 
-/*
+/**
  * Element removeClass
  *
  * @param type (string)
@@ -125,7 +125,7 @@ if (!Element.removeClass) {
     })
 }
 
-/*
+/**
  * NodeList addEventListener
  * Добавляет возможность подписаться на события из NodeList
  *
@@ -153,7 +153,7 @@ if (!NodeList.addEventListener) {
     })
 }
 
-/*
+/**
  * Element offset
  * Определение смещения
  *
@@ -175,4 +175,3 @@ if (!Element.offset) {
         }
     })
 }
-

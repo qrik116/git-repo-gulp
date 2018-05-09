@@ -4,6 +4,9 @@
 # netbeans project files
 nbproject
 
+#vscode
+.vscode
+
 # npm
 npm-debug.log
 package-lock.json
