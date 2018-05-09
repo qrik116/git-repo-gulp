@@ -55,6 +55,7 @@
     "svg4everybody": "2.1.9",
     "bootstrap-styl": "5.0.8",
     "slick-carousel": "1.8.1",
+    "source-map-loader": "0.2.3",
     "vinyl-source-stream": "2.0.0"
   },
   "devDependencies": {

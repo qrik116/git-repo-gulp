@@ -5,9 +5,13 @@ const webpack  = require('webpack'),
     path = require('path');
     const NODE_ENV = process.env.NODE_ENV ? process.env.NODE_ENV.trim() : 'development'; // trim для удаления лишних пробелов, если платформа Windows
 
+const jsLoaders = [ 'babel-loader' ];
+if (NODE_ENV === 'development') jsLoaders.push('source-map-loader');
+
 module.exports = {
     mode: NODE_ENV,
     entry: {
+        'main': path.join(__dirname, '/src/main/js/main.js'),
         ['main-react']: path.join(__dirname, '/src/main/jsx/main.jsx')
     },
     output: {
@@ -19,7 +23,7 @@ module.exports = {
         rules: [
             {
                 test: /\.jsx?$/,
-                loader: 'babel-loader',
+                loader: jsLoaders,
                 exclude: /node_modules/,
             }
         ]
@@ -55,7 +59,6 @@ module.exports = {
                 vendors: {
                     test: /[\\/]node_modules[\\/]/,
                     name: 'vendors',
-                    chunks: "all",
                 }
             }
         }

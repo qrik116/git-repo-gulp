@@ -370,7 +370,7 @@ gulp.task('main:style', () => {
     }
 });
 
-gulp.task('main:jsx', (done) => {
+gulp.task('main:script', (done) => {
     webpack(webpackConfig, onComplete);
     function onComplete(error, stats) {
         if (error) { // кажется еще не сталкивался с этой ошибкой
@@ -397,34 +397,36 @@ gulp.task('main:jsx', (done) => {
         done();
     }
 });
-gulp.task('main:js', () => {
-    if (NODE_ENV == 'production') {
-        return gulp.src(path.main.src.js)
-            .pipe(plumber())
-            .pipe(babel({
-                presets: ['env']
-            }))
-            .pipe(uglify())
-            .pipe(gulp.dest(path.build.js))
-            .pipe(gulpif(loadToWeb.main.js, gulp.dest(path.web.js)))
-    } else if (NODE_ENV == 'development') {
-        return gulp.src(path.main.src.js)
-            .pipe(plumber())
-            .pipe(babel({
-                presets: ['env']
-            }))
-            .pipe(gulp.dest(path.build.js))
-            .pipe(gulpif(loadToWeb.main.js, gulp.dest(path.web.js)))
-            .pipe(reload({stream: true}));
-    }
-});
+
+// Сборка через webpack
+// gulp.task('main:js', () => {
+//     if (NODE_ENV == 'production') {
+//         return gulp.src(path.main.src.js)
+//             .pipe(plumber())
+//             .pipe(babel({
+//                 presets: ['env']
+//             }))
+//             .pipe(uglify())
+//             .pipe(gulp.dest(path.build.js))
+//             .pipe(gulpif(loadToWeb.main.js, gulp.dest(path.web.js)))
+//     } else if (NODE_ENV == 'development') {
+//         return gulp.src(path.main.src.js)
+//             .pipe(plumber())
+//             .pipe(babel({
+//                 presets: ['env']
+//             }))
+//             .pipe(gulp.dest(path.build.js))
+//             .pipe(gulpif(loadToWeb.main.js, gulp.dest(path.web.js)))
+//             .pipe(reload({stream: true}));
+//     }
+// });
 gulp.task('main:build',
     gulp.series(
         'main:spriteSvg',
         'main:html',
         'main:style',
-        'main:js',
-        'main:jsx'
+        // 'main:js',
+        'main:script'
     )
 );
 gulp.task('main:sprite',
@@ -436,8 +438,8 @@ gulp.task('main:sprite',
 gulp.task('main:watch', () => {
     gulp.watch([path.main.watch.sprite, path.default.watch.sprite], gulp.series('main:sprite'));
     gulp.watch([path.main.watch.style, path.default.watch.style], gulp.series('main:style'));
-    gulp.watch([path.main.watch.js], gulp.series('main:js'));
-    gulp.watch([path.main.watch.jsx], gulp.series('main:jsx'));
+    // gulp.watch([path.main.watch.js], gulp.series('main:js'));
+    gulp.watch([path.main.watch.js, path.main.watch.jsx], gulp.series('main:script'));
     gulp.watch([path.main.watch.html], gulp.series('main:html-watch'))
         .on('all', (event, path) => {
             // Получаем имя файла и записываем его в глобальную переменную

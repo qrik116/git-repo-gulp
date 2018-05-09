@@ -60,21 +60,30 @@ if ('objectFit' in document.documentElement.style === false) {
 
 // }(window, document));
 
-// installVendor('js/vendors.js', () => {
+installVendor('js/vendors.js', () => {
 
-// svg4everybody();
+svg4everybody();
 
-// DOMLoad(() => {
+DOMLoad(() => {
 
-// });
+});
 
-// });
+});
 
 WinLoad(() => {
-    installVendor('js/vendors.bundle.js', () => {
-        installVendor('js/main-react.js');
-    });
-    installVendor('js/LazyLoadImg.js', () => {
-        LazyLoadImg('img[data-src]');
-    });
+    if (document.getElementById('root')) {
+        import(__dirname + '/../jsx/main.jsx');
+    }
+    
+    if (document.querySelector('img[data-src]')) {
+        installVendor('js/LazyLoadImg.js', () => {
+            LazyLoadImg('img[data-src]');
+        });
+    }
+
+    // if (document.querySelector('img[data-src]')) {
+    //     import(__dirname + '/../../default/js/LazyLoadImg.js').then(vendor => {
+    //         vendor.default('img[data-src]');
+    //     });
+    // }
 });
