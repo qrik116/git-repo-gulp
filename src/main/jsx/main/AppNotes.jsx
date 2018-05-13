@@ -37,24 +37,147 @@ class Note extends Component {
 class NoteGrid extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            inRowItem: 3
+        }
+        this.noteGrid = {
+            elementNode: null,
+            childrenNode: [],
+            rowsCount: 0,
+            rowsHeight: [],
+            rowsOffset: []
+        };
     }
 
     handlerCloseClick(event) {
         this.props.onClose(event);
     }
 
+    /**
+     * Устанавливает кол-во строк this.noteGrid.rowsCount
+     */
+    setCountRows() {
+        this.noteGrid.rowsCount = Math.ceil(this.props.notes.length/this.state.inRowItem);
+    }
+
+    /**
+     * Возвращает интервал строки
+     * @return {Array} массив
+     */
+    rowsInterval() {
+        let _interval = [];
+        for (let i = 0; i < this.noteGrid.rowsCount; i++) {
+            _interval.push({
+                from: i * this.state.inRowItem,
+                to: (i * this.state.inRowItem) + this.state.inRowItem
+            });
+        }
+        return _interval;
+    }
+
+    /**
+     * Возвращает текущий индекс строки
+     * @param {integer} value
+     * 
+     * @return {integer} index
+     */
+    currentRow(value) {
+        let index = 0;
+        this.rowsInterval().forEach((item, i) => {
+            if (item.from <= value && value < item.to) {
+                index = i;
+            }
+        });
+        return index;
+    }
+
+    /**
+     * Устанавливает высоты каждой строки this.noteGrid.rowsHeight
+     */
+    setHeightRows() {
+        this.noteGrid.rowsHeight[0] = 0;
+
+        let maxHeight = 0;
+        let currRow = 0;
+        this.noteGrid.childrenNode.forEach((item, i) => {
+            if (item) {
+                if (!(this.currentRow(i) == currRow)) {
+                    currRow = this.currentRow(i);
+                    maxHeight = 0;
+                }
+                
+                if (maxHeight < item.offsetHeight) {
+                    maxHeight = item.offsetHeight;
+                    this.noteGrid.rowsHeight[currRow + 1] = maxHeight;
+                }
+            }
+        });
+    }
+
+    /**
+     * Устанавливает сдвиги для строк в this.noteGrid.rowsOffset
+     */
+    setRowsOffset() {
+        let offset = 0
+        for (let i = 0; i < this.noteGrid.rowsCount; i++) {
+            offset += this.noteGrid.rowsHeight[i];
+            this.noteGrid.rowsOffset[i] = offset;
+        }
+    }
+    
+    /**
+     * Обновить сетку
+     */
+    updateNoteGrid() {
+        let containerWidth = this.noteGrid.elementNode.offsetWidth;
+        let childWidth = containerWidth/this.state.inRowItem;
+
+        this.noteGrid.elementNode.style.height = this.noteGrid.rowsHeight.reduce((prev, curr) => {
+            return prev + curr;
+        }, 0) + 'px';
+
+        this.noteGrid.childrenNode.forEach((item, i) => {
+            if (item) {
+                let offset = {
+                    top: this.noteGrid.rowsOffset[this.currentRow(i)],
+                    left: (i % this.state.inRowItem) * childWidth
+                }
+                item.style.width = childWidth + 'px';
+                item.style['transform'] = `translate(${offset.left}px, ${offset.top}px)`;
+            }
+        })
+    }
+
+    componentDidMount() {
+        this.setCountRows();
+        this.setHeightRows();
+        this.setRowsOffset();
+        this.updateNoteGrid();
+    }
+
+    componentDidUpdate() {
+        this.setCountRows();
+        this.setHeightRows();
+        this.setRowsOffset();
+        this.updateNoteGrid();
+    }
+
     render() {
         return (
             <div className="appNotes_container">
-                <div className="appNotes_row">
+                <div className="appNotes_row"
+                    ref={i => this.noteGrid.elementNode = i}>
                     {
-                        this.props.notes.map(item => {
-                            return <div key={item.id} className="appNotes_i">
-                                <Note id={item.id}
-                                    bgColor={item.bgColor}
-                                    onClose={event => {this.handlerCloseClick(event)}}
-                                >{item.text}</Note>
-                            </div>
+                        this.props.notes.map((item, index) => {
+                            return (
+                                <div key={item.id} className="appNotes_i"
+                                    ref={i => this.noteGrid.childrenNode[index] = i}>
+                                    <Note id={item.id}
+                                        bgColor={item.bgColor}
+                                        onClose={event => {this.handlerCloseClick(event)}}
+                                    >{item.text}</Note>
+                                </div>
+                            )
                         })
                     }
                 </div>
