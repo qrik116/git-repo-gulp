@@ -4,6 +4,7 @@ import HelloWorld from './main/HelloWorld';
 import ContactList from './main/Contact';
 import { Calculator } from './main/Calculator';
 import AppNotes from './main/AppNotes';
+import Timer from './main/Timer';
 
 let _root = document.getElementById('root'),
     _linkStyle = {
@@ -150,6 +151,16 @@ class Root extends Component {
                         Задание 5: Заметки, реализация. Сделать выбор цвета для заметки
                     </a>
                     <AppNotes />
+                </section>
+
+                <section id="issues6">
+                    <a 
+                        className="h3"
+                        href="#issue6"
+                        style={_linkStyle}>
+                        Задание 6: Таймер
+                    </a>
+                    <Timer />
                 </section>
             </div>
         );
