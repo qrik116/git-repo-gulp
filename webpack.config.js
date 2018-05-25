@@ -22,14 +22,9 @@ module.exports = {
     module: {
         rules: [
             {
-                enforce: 'pre',
-                test: /\.jsx?$/,
-                exclude: /node_modules/,
-                loader: 'eslint-loader'
-            }, {
                 test: /\.jsx?$/,
                 loader: jsLoaders,
-                exclude: /node_modules/,
+                exclude: /node_modules/
             }
         ]
     },

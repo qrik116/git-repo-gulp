@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Search from './Search.jsx';
 
 class Note extends Component {
     constructor(props) {
@@ -6,28 +7,30 @@ class Note extends Component {
     }
 
     handlerCloseClick(event) {
-        let _newEvent = Object.assign({}, event, {
+        const _newEvent = Object.assign({}, event, {
             idNote: this.props.id
         });
+
         this.props.onClose(_newEvent);
     }
 
     render() {
         return (
-            <div 
+            <div
                 style={{
                     backgroundColor: this.props.bgColor
                 }}
-                className="appNotes_note">
-                <div className="appNotes_note_text">
+                className='appNotes_note'
+            >
+                <div className='appNotes_note_text'>
                     {this.props.children.split('\n').map((item, i) => {
                         return <span key={i}>{item}<br/></span>
                     })}
                 </div>
-                <button 
-                    className="appNotes_note_close" 
-                    type="button"
-                    onClick={event => {this.handlerCloseClick(event)}}
+                <button
+                    className='appNotes_note_close'
+                    type='button'
+                    onClick={event => this.handlerCloseClick(event)}
                 >x</button>
             </div>
         );
@@ -57,7 +60,7 @@ class NoteGrid extends Component {
      * Устанавливает кол-во строк this.noteGrid.rowsCount
      */
     setCountRows() {
-        this.noteGrid.rowsCount = Math.ceil(this.props.notes.length/this.state.inRowItem);
+        this.noteGrid.rowsCount = Math.ceil(this.props.notes.length / this.state.inRowItem);
     }
 
     /**
@@ -65,7 +68,8 @@ class NoteGrid extends Component {
      * @return {Array} массив
      */
     rowsInterval() {
-        let _interval = [];
+        const _interval = [];
+
         for (let i = 0; i < this.noteGrid.rowsCount; i++) {
             _interval.push({
                 from: i * this.state.inRowItem,
@@ -78,11 +82,12 @@ class NoteGrid extends Component {
     /**
      * Возвращает текущий индекс строки
      * @param {integer} value
-     * 
+     *
      * @return {integer} index
      */
     currentRow(value) {
         let index = 0;
+
         this.rowsInterval().forEach((item, i) => {
             if (item.from <= value && value < item.to) {
                 index = i;
@@ -99,13 +104,14 @@ class NoteGrid extends Component {
 
         let maxHeight = 0;
         let currRow = 0;
+
         this.noteGrid.childrenNode.forEach((item, i) => {
             if (item) {
-                if (!(this.currentRow(i) == currRow)) {
+                if (!(this.currentRow(i) === currRow)) {
                     currRow = this.currentRow(i);
                     maxHeight = 0;
                 }
-                
+
                 if (maxHeight < item.offsetHeight) {
                     maxHeight = item.offsetHeight;
                     this.noteGrid.rowsHeight[currRow + 1] = maxHeight;
@@ -118,32 +124,34 @@ class NoteGrid extends Component {
      * Устанавливает сдвиги для строк в this.noteGrid.rowsOffset
      */
     setRowsOffset() {
-        let offset = 0
+        let offset = 0;
+
         for (let i = 0; i < this.noteGrid.rowsCount; i++) {
             offset += this.noteGrid.rowsHeight[i];
             this.noteGrid.rowsOffset[i] = offset;
         }
     }
-    
+
     /**
      * Обновить сетку
      */
     updateNoteGrid() {
-        let containerWidth = this.noteGrid.elementNode.offsetWidth;
-        let childWidth = containerWidth/this.state.inRowItem;
+        const containerWidth = this.noteGrid.elementNode.offsetWidth;
+        const childWidth = containerWidth / this.state.inRowItem;
 
-        this.noteGrid.elementNode.style.height = this.noteGrid.rowsHeight.reduce((prev, curr) => {
+        this.noteGrid.elementNode.style.height = `${this.noteGrid.rowsHeight.reduce((prev, curr) => {
             return prev + curr;
-        }, 0) + 'px';
+        }, 0)} px`;
 
         this.noteGrid.childrenNode.forEach((item, i) => {
             if (item) {
-                let offset = {
+                const offset = {
                     top: this.noteGrid.rowsOffset[this.currentRow(i)],
                     left: (i % this.state.inRowItem) * childWidth
                 }
-                item.style.width = childWidth + 'px';
-                item.style['transform'] = `translate(${offset.left}px, ${offset.top}px)`;
+
+                item.style.width = `${childWidth}px`;
+                item.style.transform = `translate(${offset.left}px, ${offset.top}px)`;
             }
         })
     }
@@ -164,17 +172,19 @@ class NoteGrid extends Component {
 
     render() {
         return (
-            <div className="appNotes_container">
-                <div className="appNotes_row"
-                    ref={i => this.noteGrid.elementNode = i}>
+            <div className='appNotes_container'>
+                <div className='appNotes_row'
+                    ref={i => this.noteGrid.elementNode = i}
+                >
                     {
                         this.props.notes.map((item, index) => {
                             return (
-                                <div key={item.id} className="appNotes_i"
-                                    ref={i => this.noteGrid.childrenNode[index] = i}>
+                                <div key={item.id} className='appNotes_i'
+                                    ref={i => this.noteGrid.childrenNode[index] = i}
+                                >
                                     <Note id={item.id}
                                         bgColor={item.bgColor}
-                                        onClose={event => {this.handlerCloseClick(event)}}
+                                        onClose={event => this.handlerCloseClick(event)}
                                     >{item.text}</Note>
                                 </div>
                             )
@@ -192,8 +202,7 @@ class NoteColor extends Component {
 
         this.activeColor = '#ff897d';
         this.state = {
-            color: ['#ff897d', '#ffd27a', '#ffff85', 
-                '#cfd8dc', '#7cd7ff', '#a4ffeb', '#cbff8a']
+            color: ['#ff897d', '#ffd27a', '#ffff85', '#cfd8dc', '#7cd7ff', '#a4ffeb', '#cbff8a']
         }
     }
 
@@ -203,20 +212,19 @@ class NoteColor extends Component {
 
     render() {
         return (
-            <div className="appNotes_color">
+            <div className='appNotes_color'>
                 {
                     this.state.color.map((item, i) => {
                         return (
-                            <div key={i} className="appNotes_color_i">
-                                <input type="radio" 
-                                    name="noteeditcolor" 
-                                    defaultChecked={this.activeColor == item ? true : false} 
+                            <div key={i} className='appNotes_color_i'>
+                                <input type='radio'
+                                    name='noteeditcolor'
+                                    defaultChecked={this.activeColor === item}
                                     value={item}
-                                    id={'color_'+i}
-                                    onChange={event => this.handlerColorChange(event)}/>
-                                <label htmlFor={'color_'+i}
-                                    style={{backgroundColor: item}}
-                                ></label>
+                                    id={`color_${i}`}
+                                    onChange={event => this.handlerColorChange(event)}
+                                />
+                                <label htmlFor={`color_${i}`} style={{ backgroundColor: item }} />
                             </div>
                         );
                     })
@@ -234,7 +242,7 @@ class NoteEdit extends Component {
         this.textArea = null;
     }
 
-    handlerAddClick(event) {
+    handlerAddClick() {
         if (this.textArea.value) {
             this.props.onAdd({
                 value: this.textArea.value,
@@ -246,17 +254,17 @@ class NoteEdit extends Component {
 
     render() {
         return (
-            <div className="appNotes_space">
-                <textarea 
-                    name="appNotes" 
-                    placeholder="Enter your note here..."
+            <div className='appNotes_space'>
+                <textarea
+                    name='appNotes'
+                    placeholder='Enter your note here...'
                     ref={i => (this.textArea = i)}
-                ></textarea>
+                />
                 <NoteColor ref={i => this.noteColor = i}/>
-                <button 
-                    className="appNotes_add" 
-                    type="button"
-                    onClick={event => {this.handlerAddClick(event)}}
+                <button
+                    className='appNotes_add'
+                    type='button'
+                    onClick={event => this.handlerAddClick(event)}
                 >Add</button>
             </div>
         );
@@ -270,16 +278,19 @@ class AppNotes extends Component {
         this.state = {
             idNotes: 0,
             notes: []
-        }
+        };
+        this.tempNotes = [];
     }
 
-    componentDidMount() {
-        let localNotes = JSON.parse(localStorage.getItem('notes'));
+    componentWillMount() {
+        const localNotes = JSON.parse(localStorage.getItem('notes'));
+
         if (localNotes && localNotes.length) {
             this.setState({
                 notes: localNotes,
                 idNotes: localNotes[0].id + 1
             });
+            this.tempNotes = localNotes;
         }
     }
 
@@ -289,7 +300,8 @@ class AppNotes extends Component {
 
     handlerAdd(objValue) {
         if (objValue.value) {
-            let _newnotes = this.state.notes;
+            const _newnotes = this.state.notes;
+
             _newnotes.unshift({
                 id: this.state.idNotes,
                 text: objValue.value,
@@ -299,31 +311,45 @@ class AppNotes extends Component {
                 idNotes: this.state.idNotes + 1,
                 notes: _newnotes
             });
+            this.tempNotes = _newnotes;
         }
     }
 
     handlerCloseClick(event) {
         let _newnotes = this.state.notes;
+
         _newnotes = _newnotes.filter(item => item.id !== event.idNote);
         this.setState({
             notes: _newnotes
         });
+        this.tempNotes = _newnotes;
     }
 
     updateLocalStorage() {
-        let notes = JSON.stringify(this.state.notes);
+        const notes = JSON.stringify(this.state.notes);
+
         localStorage.setItem('notes', notes);
+    }
+
+    handlerSearch(result) {
+        this.setState({
+            notes: result
+        })
     }
 
     render() {
         return (
-            <div className="appNotes">
-                <h3 className="appNotes_title">AppNotes</h3>
+            <div className='appNotes'>
+                <Search
+                    data={this.tempNotes}
+                    onSearch={result => this.handlerSearch(result)}
+                />
+                <h3 className='appNotes_title'>AppNotes</h3>
                 <NoteEdit onAdd={value => this.handlerAdd(value)} />
                 {
                     this.state.notes.length ?
-                    <NoteGrid 
-                        notes={this.state.notes} 
+                    <NoteGrid
+                        notes={this.state.notes}
                         onClose={event => this.handlerCloseClick(event)}
                     />
                     :
