@@ -79,12 +79,12 @@ class Timer extends Component {
         super(props);
         this.state = {
             counter: 0,
-            isPaused: false
+            isPaused: true
         }
     }
 
     componentDidMount() {
-        this.startTimer();
+        if (!this.state.isPaused) this.startTimer();
     }
 
     componentWillUnmount() {
