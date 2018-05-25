@@ -9,7 +9,7 @@ class Calculator extends Component {
             secondArg: 0,
             arithmeticActive: 'сложение',
             arithmetic: ['сложение', 'вычитание', 'умножение'],
-            value: 0,
+            value: 0
         }
     }
 
@@ -21,7 +21,8 @@ class Calculator extends Component {
     }
 
     handerFirstArgChange(event) {
-        let _input = event.target;
+        const _input = event.target;
+
         this.onlyNumber(_input);
         this.setState({
             firstArg: _input.value,
@@ -30,7 +31,8 @@ class Calculator extends Component {
     }
 
     handerSecondArgChange(event) {
-        let _input = event.target;
+        const _input = event.target;
+
         this.onlyNumber(_input);
         this.setState({
             secondArg: _input.value,
@@ -47,18 +49,22 @@ class Calculator extends Component {
 
     calculate(operation, arg1, arg2) {
         let value = 0;
+
         switch (operation) {
             case 'сложение':
-                value = (parseInt(arg1) || 0) + (parseInt(arg2) || 0);
+                value = (parseInt(arg1, 10) || 0) + (parseInt(arg2, 10) || 0);
             break;
 
             case 'вычитание':
-                value = (parseInt(arg1) || 0) - (parseInt(arg2) || 0);
+                value = (parseInt(arg1, 10) || 0) - (parseInt(arg2, 10) || 0);
             break;
 
             case 'умножение':
-                value = (parseInt(arg1) || 0) * (parseInt(arg2) || 0);
+                value = (parseInt(arg1, 10) || 0) * (parseInt(arg2, 10) || 0);
             break;
+
+            default:
+                break;
         }
         return value;
     }
@@ -66,37 +72,40 @@ class Calculator extends Component {
     render() {
         return (
             <div>
-                <select 
-                    name="arithmetic" 
+                <select
+                    name='arithmetic'
                     onChange={event => (this.handerSelectChange(event))}
-                    value={this.state.arithmeticActive}>
+                    value={this.state.arithmeticActive}
+                >
                     {
                         this.state.arithmetic.map((item, i) => {
                             return <option
                                 key={i}
-                                value={item}>
+                                value={item}
+                                   >
                                 {item}
                             </option>
                         })
                     }
                 </select>
-                <input type="text" 
-                    size="3"
-                    onChange={event => {this.handerFirstArgChange(event)}}
-                    name="firstArg"
-                    value={this.state.firstArg}/>
-                <input type="text" 
-                    size="3"
-                    onChange={event => {this.handerSecondArgChange(event)}}
-                    name="secondArg"
-                    value={this.state.secondArg}/>
+                <input type='text'
+                    size='3'
+                    onChange={event => this.handerFirstArgChange(event)}
+                    name='firstArg'
+                    value={this.state.firstArg}
+                />
+                <input type='text'
+                    size='3'
+                    onChange={event => this.handerSecondArgChange(event)}
+                    name='secondArg'
+                    value={this.state.secondArg}
+                />
                 <p>
                     <b>Результат:</b> {this.state.value}
                 </p>
             </div>
         );
     }
-
 }
 
 export { Calculator };

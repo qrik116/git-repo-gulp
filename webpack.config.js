@@ -1,11 +1,11 @@
 'use strict';
 
-const webpack  = require('webpack'),
-    UglifyJsPlugin = require('uglifyjs-webpack-plugin'),
-    path = require('path');
-    const NODE_ENV = process.env.NODE_ENV ? process.env.NODE_ENV.trim() : 'development'; // trim для удаления лишних пробелов, если платформа Windows
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const path = require('path');
+const NODE_ENV = process.env.NODE_ENV ? process.env.NODE_ENV.trim() : 'development'; // trim для удаления лишних пробелов, если платформа Windows
 
 const jsLoaders = [ 'babel-loader' ];
+
 if (NODE_ENV === 'development') jsLoaders.push('source-map-loader');
 
 module.exports = {
@@ -22,6 +22,11 @@ module.exports = {
     module: {
         rules: [
             {
+                enforce: 'pre',
+                test: /\.jsx?$/,
+                exclude: /node_modules/,
+                loader: 'eslint-loader'
+            }, {
                 test: /\.jsx?$/,
                 loader: jsLoaders,
                 exclude: /node_modules/,
@@ -29,7 +34,7 @@ module.exports = {
         ]
     },
     resolve: {
-        extensions: [".js", ".jsx"]
+        extensions: ['.js', '.jsx']
     },
     optimization: {
         minimizer: [
@@ -38,7 +43,7 @@ module.exports = {
                     warning: false,
                     output: {
                         beautify: false,
-                        comments: false,
+                        comments: false
                     },
                     compress: {
                         sequences     : true,
@@ -54,13 +59,13 @@ module.exports = {
         ],
         splitChunks: {
             name: true,
-            automaticNameDelimiter: "-",
+            automaticNameDelimiter: '-',
             cacheGroups: {
                 vendors: {
                     test: /[\\/]node_modules[\\/]/,
-                    name: 'vendors',
+                    name: 'vendors'
                 }
             }
         }
     }
-};
+}

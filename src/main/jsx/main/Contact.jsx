@@ -41,7 +41,7 @@ class Contact extends Component {
         }
     }
 
-    handlerClick(event) {
+    handlerClick() {
         this.setState({
             open: !this.state.open
         });
@@ -49,24 +49,24 @@ class Contact extends Component {
 
     render() {
         return (
-            <li className="contact" 
-                role="button" 
+            <li className='contact'
+                role='button'
                 aria-pressed={this.state.open ? 'true' : 'false'}
-                onClick={event => {this.handlerClick(event)}}>
-
-                <div className="contact-row">
-                    <img className="contact-image" src={this.props.image} width="60px" height="60px" />
-                    <div className="contact-info">
-                        <div className="contact-name"> {this.props.name} </div>
-                        <div className="contact-number"> {this.props.phoneNumber} </div>
+                onClick={event => this.handlerClick(event)}
+            >
+                <div className='contact-row'>
+                    <img className='contact-image' src={this.props.image} width='60px' height='60px' />
+                    <div className='contact-info'>
+                        <div className='contact-name'> {this.props.name} </div>
+                        <div className='contact-number'> {this.props.phoneNumber} </div>
                     </div>
                 </div>
-                { 
+                {
                     this.state.open ?
-                        <div className="contact-row">
+                        <div className='contact-row'>
                             <div>
-                                <div className="contact-address"><b>Адрес: </b>{this.props.address}</div>
-                                <div className="contact-email"><b>Email: </b>{this.props.email}</div>
+                                <div className='contact-address'><b>Адрес: </b>{this.props.address}</div>
+                                <div className='contact-email'><b>Email: </b>{this.props.email}</div>
                             </div>
                         </div>
                     :
@@ -75,7 +75,6 @@ class Contact extends Component {
             </li>
         );
     }
-
 }
 
 class ContactList extends Component {
@@ -88,11 +87,13 @@ class ContactList extends Component {
     }
 
     handleSearch(event) {
-        let searchQuery = event.target.value.toLowerCase();
-        let displayedContacts = CONTACTS.filter(el => {
-            let searchValue = el.name.toLowerCase();
+        const searchQuery = event.target.value.toLowerCase();
+        const displayedContacts = CONTACTS.filter(el => {
+            const searchValue = el.name.toLowerCase();
+
             return searchValue.indexOf(searchQuery) !== -1;
         });
+
         this.setState({
             displayedContacts: displayedContacts
         });
@@ -100,31 +101,32 @@ class ContactList extends Component {
 
     render() {
         return (
-            <div className="contacts">
-                <input 
-                    type="text" 
-                    placeholder="Search..." 
-                    className="search-field" 
-                    onChange={event => {this.handleSearch(event)}} 
+            <div className='contacts'>
+                <input
+                    type='text'
+                    placeholder='Search...'
+                    className='search-field'
+                    onChange={event => this.handleSearch(event)}
                 />
-                <ul className="contacts-list">
+                <ul className='contacts-list'>
                     {
                        this.state.displayedContacts.map(el => {
-                            return <Contact
-                                key={el.id}
-                                name={el.name}
-                                phoneNumber={el.phoneNumber}
-                                image={el.image}
-                                address={el.address}
-                                email={el.email}
-                            />;
+                            return (
+                                <Contact
+                                    key={el.id}
+                                    name={el.name}
+                                    phoneNumber={el.phoneNumber}
+                                    image={el.image}
+                                    address={el.address}
+                                    email={el.email}
+                                />
+                            )
                        })
                     }
                 </ul>
             </div>
         );
     }
-
 }
 
 export default ContactList;

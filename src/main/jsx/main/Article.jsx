@@ -13,13 +13,12 @@ class Article extends Component {
     render() {
         return (
             <article>
-                {this.state.title ? <h3 className="title">{this.state.title}</h3> : ''}
-                <h4 className="author">Автор: {this.state.authorName}</h4>
-                <p className="text">{this.props.children}</p>
+                {this.state.title ? <h3 className='title'>{this.state.title}</h3> : ''}
+                <h4 className='author'>Автор: {this.state.authorName}</h4>
+                <p className='text'>{this.props.children}</p>
             </article>
         );
     }
-
 }
 
 export default Article;

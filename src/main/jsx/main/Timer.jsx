@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-let styles = `
+const styles = `
     .timer {
         display: flex;
         align-items: center;
@@ -131,25 +131,25 @@ class Timer extends Component {
     }
 
     format(value) {
-        let minutes = Math.floor(value / 60),
-            seconds = Math.floor(value % 60);
+        const minutes = Math.floor(value / 60);
+        const seconds = Math.floor(value % 60);
 
-        return `${minutes < 10 ? '0'+minutes : minutes}:${ seconds < 10 ? '0'+seconds : seconds }`
+        return `${minutes < 10 ? `0${minutes}` : minutes}:${ seconds < 10 ? `0${seconds}` : seconds }`
     }
 
     render() {
         return (
-            <div className="timer">
-                <style type="text/css">{styles}</style>
-                <button 
+            <div className='timer'>
+                <style type='text/css'>{styles}</style>
+                <button
                     className={`timer_button ${this.state.isPaused ? 'timer_button-play' : 'timer_button-pause'}`}
                     onClick={() => this.play()}
-                ></button>
-                <span className="timer_time">Таймер {this.format(this.state.counter)}</span>
-                <button 
-                    className="timer_button timer_button-stop"
+                />
+                <span className='timer_time'>Таймер {this.format(this.state.counter)}</span>
+                <button
+                    className='timer_button timer_button-stop'
                     onClick={() => this.stop()}
-                ></button>
+                />
             </div>
         );
     }

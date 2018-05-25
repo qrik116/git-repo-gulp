@@ -19,15 +19,14 @@ class HelloWorld extends Component {
     render() {
         return (
             <div>
-                <input type="text" 
-                    onChange={event => {this.handerChange(event)}}
+                <input type='text'
+                    onChange={event => this.handerChange(event)}
                 />
                 <br/>
                 <p>Hello, {this.state.value || this.state.valueDefault}!</p>
             </div>
         );
     }
-
 }
 
 export default HelloWorld;
