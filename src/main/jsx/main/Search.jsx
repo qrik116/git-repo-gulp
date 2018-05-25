@@ -3,63 +3,42 @@ import React, { PureComponent } from 'react';
 class Search extends PureComponent {
     static defaultProps = {
         data: [],
-        error: false,
-        errorMessage: 'Not found!!!',
-        onSearch: () => {}
+        value: '',
+        filterList: [],
+        onChange: () => {}
     };
 
     constructor(props) {
         super(props)
         this.state = {
-            searchQuery: '',
             data: this.props.data || [],
-            isNotFound: false
+            value: ''
         }
     }
 
-    search() {
-        const result = this.state.data.filter(el => {
-            const searchValue = el.text.toLowerCase();
-
-            return searchValue.indexOf(this.state.searchQuery) !== -1;
-        });
-
-        if (!result.length) {
-            this.setState({
-                isNotFound: true
-            })
+    componentWillMount() {
+        if (this.props.value) {
+            this.setState({ value: this.props.value });
+        } else {
+            if (this.props.filterList.length) this.setState({ value: this.props.filterList[0].value });
         }
-
-        this.props.onSearch(result);
     }
 
-    handlerSubmit(event) {
-        event.preventDefault();
+    handlerChangeSelect = (event) => {
+        const result = this.props.data.filter(item => item.status[event.target.value]);
 
-        this.search();
-    }
-
-    handlerChange(event) {
-        this.setState({
-            searchQuery: event.target.value.toLowerCase(),
-            isNotFound: false
-        }, () => {
-            this.search();
-        })
+        this.setState({ value: event.target.value });
+        this.props.onChange(result);
     }
 
     render() {
+        const options = this.props.filterList.map((item, i) => <option key={i} value={item.value}>{item.name}</option>);
+
         return (
             <div>
-                <form
-                    onSubmit={event => this.handlerSubmit(event)}
-                >
-                    <input type='text' placeholder='Search...' onChange={event => this.handlerChange(event)}/>
-                    <button type='submit'>x</button>
+                <form>
+                    <select name='filter-notes' id='filter-notes' value={this.state.value} onChange={this.handlerChangeSelect}>{options}</select>
                 </form>
-                {(this.state.isNotFound && this.props.error) &&
-                    <p>{this.props.errorMessage}</p>
-                }
             </div>
         )
     }

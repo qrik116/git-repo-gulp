@@ -10,6 +10,7 @@ if (NODE_ENV === 'development') jsLoaders.push('source-map-loader');
 
 module.exports = {
     mode: NODE_ENV,
+    devtool: 'cheap-module-source-map',
     entry: {
         'main': path.join(__dirname, '/src/main/js/main.js'),
         ['main-react']: path.join(__dirname, '/src/main/jsx/main.jsx')

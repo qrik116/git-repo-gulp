@@ -1,17 +1,95 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import Search from './Search.jsx';
+
+class OptionsNote extends Component {
+    static defaultProps ={
+        onComplete: () => {},
+        onDelete: () => {}
+    }
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            isShowMenu: false
+        };
+        this.menu = null;
+        this.buttonOptions = null;
+    }
+
+    componentDidMount() {
+        document.addEventListener('click', this.closeMenu);
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('click', this.closeMenu);
+    }
+
+    closeMenu = (event) => {
+        if (this.menu.contains(event.target) || this.buttonOptions.contains(event.target)) {
+            return false;
+        }
+
+        if (this.state.isShowMenu) {
+            this.setState({
+                isShowMenu: false
+            })
+        }
+    }
+
+    handlerOpenMenu = () => {
+        this.setState({ isShowMenu: !this.state.isShowMenu });
+    }
+
+    handlerComplete = (event) => {
+        this.setState({
+            isShowMenu: false
+        });
+        this.props.onComplete(event);
+    }
+
+    render() {
+        return (
+            <Fragment>
+                <button
+                    className='appNotes_options'
+                    type='button'
+                    onClick={this.handlerOpenMenu}
+                    ref={i => this.buttonOptions = i}
+                />
+                <div
+                    className={`appNotes_options_menu${this.state.isShowMenu ? ' appNotes_options_menu-open' : ''}`}
+                    ref={i => this.menu = i}
+                >
+                    <ul>
+                        <li onClick={this.handlerComplete}>Выполнено</li>
+                        <li style={{ color: 'red' }} onClick={this.props.onDelete}>Удалить</li>
+                    </ul>
+                </div>
+            </Fragment>
+        )
+    }
+}
 
 class Note extends Component {
     constructor(props) {
         super(props);
     }
 
-    handlerCloseClick(event) {
+    handlerDelete = (event) => {
         const _newEvent = Object.assign({}, event, {
             idNote: this.props.id
         });
 
         this.props.onClose(_newEvent);
+    }
+
+    handlerComplete = (event) => {
+        const _newEvent = Object.assign({}, event, {
+            idNote: this.props.id
+        });
+
+        this.props.onComplete(_newEvent);
     }
 
     render() {
@@ -27,11 +105,7 @@ class Note extends Component {
                         return <span key={i}>{item}<br/></span>
                     })}
                 </div>
-                <button
-                    className='appNotes_note_close'
-                    type='button'
-                    onClick={event => this.handlerCloseClick(event)}
-                >x</button>
+                <OptionsNote onComplete={this.handlerComplete} onDelete={this.handlerDelete} />
             </div>
         );
     }
@@ -141,7 +215,7 @@ class NoteGrid extends Component {
 
         this.noteGrid.elementNode.style.height = `${this.noteGrid.rowsHeight.reduce((prev, curr) => {
             return prev + curr;
-        }, 0)} px`;
+        }, 0)}px`;
 
         this.noteGrid.childrenNode.forEach((item, i) => {
             if (item) {
@@ -185,6 +259,7 @@ class NoteGrid extends Component {
                                     <Note id={item.id}
                                         bgColor={item.bgColor}
                                         onClose={event => this.handlerCloseClick(event)}
+                                        onComplete={this.props.onComplete}
                                     >{item.text}</Note>
                                 </div>
                             )
@@ -277,9 +352,22 @@ class AppNotes extends Component {
 
         this.state = {
             idNotes: 0,
-            notes: []
+            notes: [],
+            activeFilter: 'all'
         };
         this.tempNotes = [];
+        this.filterList = [
+            {
+                name: 'Все',
+                value: 'all'
+            }, {
+                name: 'Завершенные',
+                value: 'complete'
+            }, {
+                name: 'Новые',
+                value: 'new'
+            }
+        ];
     }
 
     componentWillMount() {
@@ -300,12 +388,18 @@ class AppNotes extends Component {
 
     handlerAdd(objValue) {
         if (objValue.value) {
-            const _newnotes = this.state.notes;
+            const _newnotes = this.tempNotes;
+            const _state = {};
+
+            this.filterList.forEach(item => {
+                _state[item.value] = ['all', 'new'].indexOf(item.value) !== -1
+            });
 
             _newnotes.unshift({
                 id: this.state.idNotes,
                 text: objValue.value,
-                bgColor: objValue.bgColor
+                bgColor: objValue.bgColor,
+                status: _state
             });
             this.setState({
                 idNotes: this.state.idNotes + 1,
@@ -316,7 +410,7 @@ class AppNotes extends Component {
     }
 
     handlerCloseClick(event) {
-        let _newnotes = this.state.notes;
+        let _newnotes = this.state.notes.slice();
 
         _newnotes = _newnotes.filter(item => item.id !== event.idNote);
         this.setState({
@@ -325,13 +419,29 @@ class AppNotes extends Component {
         this.tempNotes = _newnotes;
     }
 
+    handlerComplete = (event) => {
+        const _notes = this.state.notes.slice();
+
+        _notes.forEach(item => {
+            if (item.id === event.idNote) {
+                if (!item.status.complete) {
+                    item.status.complete = true;
+                    item.status.new = false
+                }
+            }
+        });
+        this.setState({
+            notes: _notes
+        });
+    }
+
     updateLocalStorage() {
         const notes = JSON.stringify(this.state.notes);
 
         localStorage.setItem('notes', notes);
     }
 
-    handlerSearch(result) {
+    handerChangeSeach = (result) => {
         this.setState({
             notes: result
         })
@@ -342,18 +452,18 @@ class AppNotes extends Component {
             <div className='appNotes'>
                 <Search
                     data={this.tempNotes}
-                    onSearch={result => this.handlerSearch(result)}
+                    value={this.state.activeFilter}
+                    filterList={this.filterList}
+                    onChange={this.handerChangeSeach}
                 />
                 <h3 className='appNotes_title'>AppNotes</h3>
                 <NoteEdit onAdd={value => this.handlerAdd(value)} />
-                {
-                    this.state.notes.length ?
+                {this.state.notes.length > 0 &&
                     <NoteGrid
                         notes={this.state.notes}
                         onClose={event => this.handlerCloseClick(event)}
+                        onComplete={this.handlerComplete}
                     />
-                    :
-                    ''
                 }
             </div>
         );
