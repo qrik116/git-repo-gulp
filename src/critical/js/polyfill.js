@@ -1,20 +1,16 @@
 /**
- * Polifyll v0.0.01
+ * Polifyll v1.0.0
  * Copyright 2018 Evgeniy Kozirev
  */
 
-/*
- * Polifyll Objec.assign
+/**
+ * Polifyll Object.assign
  *
- * @param type (object)
- *  - Объект, в который произойдет копирование
+ * @param {object} Объект, в который произойдет копирование
  *
- * @param type (object) ...arg
- *  - Объекты, которые будут скопированны
+ * @param {object} ...arg Объекты, которые будут скопированны
  *
- * @return type (object)
- *  - Полученный объект
- *
+ * @return {object} Новый объект
  */
 if (!Object.assign) {
     Object.defineProperty(Object, 'assign', {
@@ -48,16 +44,14 @@ if (!Object.assign) {
     });
 }
 
-/*
+/**
  * Element hasClass
  *
- * @param type (string)
- *  - className
+ * @param {string} className селектор
  *
- * @return type (boolean)
+ * @return {boolean}
  *  - Возвращает true, если есть класс с указанным именем,
  *  - Возвращает false, если нет класса с указанным именем
- *
  */
 if (!Element.hasClass) {
     Object.defineProperty(Element.prototype, 'hasClass', {
@@ -73,21 +67,18 @@ if (!Element.hasClass) {
     })
 }
 
-/*
+/**
  * Element addClass
  *
- * @param type (string)
- *  - className
+ * @param {string} className селектор
  *
- * @return type (Element)
- *  - Возвращает элемент, которому был(и) добавлен(ы) класс(ы)
- *
+ * @return {Element} Element, Возвращает элемент, которому был(и) добавлен(ы) класс(ы)
  */
 if (!Element.addClass) {
     Object.defineProperty(Element.prototype, 'addClass', {
-        enumerable: true,
-        configurable: true,
-        writable: true,
+        enumerable: false,
+        configurable: false,
+        writable: false,
         value: function (className) {
             if (this.classList)
                 this.classList.add(className);
@@ -99,21 +90,18 @@ if (!Element.addClass) {
     })
 }
 
-/*
+/**
  * NodeList addClass
  *
- * @param type (string)
- *  - className
+ * @param {string} className селектор
  *
- * @return type (Element)
- *  - Возвращает элементы, которому был(и) добавлен(ы) класс(ы)
- *
+ * @return {NodeList} NodeList, Возвращает элементы, которому был(и) добавлен(ы) класс(ы)
  */
 if (!NodeList.addClass) {
     Object.defineProperty(NodeList.prototype, 'addClass', {
-        enumerable: true,
-        configurable: true,
-        writable: true,
+        enumerable: false,
+        configurable: false,
+        writable: false,
         value: function (className) {
             Array.prototype.forEach.call(this, function(item) {
                 if (item.classList)
@@ -126,21 +114,18 @@ if (!NodeList.addClass) {
     })
 }
 
-/*
+/**
  * Element removeClass
  *
- * @param type (string)
- *  - className
+ * @param {string} className селектор
  *
- * @return type (Element)
- *  - Возвращает элемент, в котором был(и) удален(ы) класс(ы)
- *
+ * @return {Element} Element, Возвращает элемент, в котором был(и) удален(ы) класс(ы)
  */
 if (!Element.removeClass) {
     Object.defineProperty(Element.prototype, 'removeClass', {
-        enumerable: true,
-        configurable: true,
-        writable: true,
+        enumerable: false,
+        configurable: false,
+        writable: false,
         value: function (className) {
             if (this.classList)
                 this.classList.remove(className);
@@ -152,21 +137,18 @@ if (!Element.removeClass) {
     })
 }
 
-/*
+/**
  * NodeList removeClass
  *
- * @param type (string)
- *  - className
+ * @param {string} className селектор
  *
- * @return type (Element)
- *  - Возвращает элементы, в котором был(и) удален(ы) класс(ы)
- *
+ * @return {NodeList} NodeList, Возвращает элементы, в котором был(и) удален(ы) класс(ы)
  */
 if (!NodeList.removeClass) {
     Object.defineProperty(NodeList.prototype, 'removeClass', {
-        enumerable: true,
-        configurable: true,
-        writable: true,
+        enumerable: false,
+        configurable: false,
+        writable: false,
         value: function (className) {
             Array.prototype.forEach.call(this, function(item) {
                 if (item.classList)
@@ -179,25 +161,21 @@ if (!NodeList.removeClass) {
     })
 }
 
-/*
+/**
  * NodeList addEventListener
  * Добавляет возможность подписаться на события из NodeList
  *
- * @param type (string)
- *  - Event name, 'click', 'mouseup' ...
+ * @param {string} _event Event name, 'click', 'mouseup' ...
  *
- * @param type (function)
- *  - обработчик события
+ * @param {function} fn обработчик события
  *
- * @return type (Element)
- *  - Возвращает элемент, в котором произошло событие
- *
+ * @return {Element} Element, Возвращает элемент, в котором произошло событие
  */
 if (!NodeList.addEventListener) {
     Object.defineProperty(NodeList.prototype, 'addEventListener', {
-        enumerable: true,
-        configurable: true,
-        writable: true,
+        enumerable: false,
+        configurable: false,
+        writable: false,
         value: function addEventListener(_event, fn) {
             Array.prototype.forEach.call(this, function(item) {
                 item.addEventListener(_event, fn);
@@ -207,19 +185,17 @@ if (!NodeList.addEventListener) {
     })
 }
 
-/*
+/**
  * Element offset
  * Определение смещения
  *
- * @return type (object)
- *  - Возвращает объект с длинами
- *
+ * @return {Element} Element, Возвращает объект с длинами. { top: 10, left: 10 }
  */
 if (!Element.offset) {
     Object.defineProperty(Element.prototype, 'offset', {
-        enumerable: true,
-        configurable: true,
-        writable: true,
+        enumerable: false,
+        configurable: false,
+        writable: false,
         value: function () {
             var rect = this.getBoundingClientRect();
             return {
@@ -230,3 +206,24 @@ if (!Element.offset) {
     })
 }
 
+/**
+ * Element closest
+ * Определение смещения
+ *
+ * @return {Element} Element, Возвращает найденный элемент или null
+ */
+if (!Element.closest) {
+    Element.prototype.matches = Element.prototype.matches || Element.prototype.mozMatchesSelector || Element.prototype.msMatchesSelector || Element.prototype.oMatchesSelector || Element.prototype.webkitMatchesSelector;
+
+    Object.defineProperty(Element.prototype, 'closest', {
+        enumerable: false,
+        configurable: false,
+        writable: false,
+        value: function closest(selector) {
+            if (!this) return null;
+            if (this.matches(selector)) return this;
+            if (!this.parentElement) {return null}
+            else return this.parentElement.closest(selector)
+        }
+    })
+}
