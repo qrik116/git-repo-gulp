@@ -71,19 +71,9 @@ DOMLoad(() => {
 });
 
 WinLoad(() => {
-    if (document.getElementById('root')) {
-        import(__dirname + '/../jsx/main.jsx');
-    }
-    
     if (document.querySelector('img[data-src]')) {
         installVendor('js/LazyLoadImg.js', () => {
             LazyLoadImg('img[data-src]');
         });
     }
-
-    // if (document.querySelector('img[data-src]')) {
-    //     import(__dirname + '/../../default/js/LazyLoadImg.js').then(vendor => {
-    //         vendor.default('img[data-src]');
-    //     });
-    // }
 });

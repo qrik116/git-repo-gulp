@@ -1,7 +1,7 @@
 {
   "name": "gulp_boilerplate",
-  "version": "5.1.1",
-  "description": "Frontend Kit PUG(html) + Stylus(css) + JS(Babel) + React",
+  "version": "5.1.2",
+  "description": "Frontend Kit PUG(html) + Stylus(css) + JS(Babel)",
   "main": "index.html",
   "scripts": {
     "start": "set NODE_ENV=development && gulp",
@@ -52,23 +52,12 @@
     "jquery.maskedinput": "^1.4.1",
     "path": "0.12.7",
     "pug": "2.0.3",
-    "react": "16.4.0",
-    "react-dom": "16.4.0",
     "slick-carousel": "1.8.1",
-    "source-map-loader": "0.2.3",
-    "svg4everybody": "2.1.9",
-    "vinyl-source-stream": "2.0.0"
+    "svg4everybody": "2.1.9"
   },
   "devDependencies": {
     "animate.css": "^3.5.2",
-    "babel-loader": "^7.1.4",
-    "babel-plugin-syntax-dynamic-import": "^6.18.0",
-    "browserify-require-async": "^0.4.0",
-    "eslint-loader": "^2.0.0",
-    "fancy-log": "^1.3.2",
     "holderjs": "^2.9.4",
-    "webpack": "^4.8.3",
-    "webpack-cli": "^2.1.4",
     "wowjs": "^1.1.3"
   }
 }

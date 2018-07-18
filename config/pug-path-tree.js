@@ -1,8 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-module.exports = function(pathTemplate) {
-
+module.exports = function pugPathTree(pathTemplate) {
   pathTemplate = pathTemplate.replace(/\/\*\.pug/, '') || 'src/main';
   /**
    * Нормализация пути
@@ -34,7 +33,8 @@ module.exports = function(pathTemplate) {
         // Удаляем include, extends, а также расширение .pug если присутствует
         let _firstInitial = match.replace(/\s*(include|extends)\s([\w\/\.\-\_]+?)(\.pug|$)/g, '$2');
         // Проверяем имя файла, вдруг это не pug файл, тогда не добавляем ему .pug
-        let _anotherPug = /\.(svg|css|html|js|styl)$/.test(_firstInitial);
+        const _anotherPug = /\.(svg|css|html|js|styl)$/.test(_firstInitial);
+
         if (!_anotherPug) {
           _firstInitial += '.pug';
         }
@@ -70,11 +70,12 @@ module.exports = function(pathTemplate) {
 
   /**
    * Вычисление древа зависимостей
-   * 
+   *
    * Функция рекурсивно проходит по всем зависимостям и заносит их в массив.
    */
   function calculateTree(target, context, tree) {
     const page = getPage(target);
+
     if (!page) {
       return tree;
     }
@@ -97,6 +98,7 @@ module.exports = function(pathTemplate) {
    * Получение зависимостей для каждой из страниц
    */
     const cacheTree = {};
+
     getPages().forEach((page) => {
       cacheTree[page] = calculateTree(page, null, [page]);
     });
