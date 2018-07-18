@@ -13,12 +13,12 @@ import csso from 'gulp-csso';
 import uglify from 'gulp-uglify';
 import filter from 'gulp-filter';
 
-import image from 'gulp-image';
+// import image from 'gulp-image';
 import svgSprite from 'gulp-svg-sprite';
 import svgmin from 'gulp-svgmin';
 import cheerio from 'gulp-cheerio';
 import replace from 'gulp-replace';
-import cache from 'gulp-cache';
+// import cache from 'gulp-cache';
 
 import rigger from 'gulp-rigger';
 
@@ -26,11 +26,11 @@ import inlinesource from 'gulp-inline-source';
 
 import getPathsTree from './config/pug-path-tree';
 
-import browserify from 'browserify';
-import bra from 'browserify-require-async';
-import babelify from 'babelify';
-import source from 'vinyl-source-stream';
-import streamify from 'gulp-streamify';
+// import browserify from 'browserify';
+// import bra from 'browserify-require-async';
+// import babelify from 'babelify';
+// import source from 'vinyl-source-stream';
+// import streamify from 'gulp-streamify';
 
 import webpack from 'webpack';
 import log from 'fancy-log';
@@ -42,11 +42,12 @@ const statsLog = { // для красивых логов в консоли
 };
 const NODE_ENV = process.env.NODE_ENV ? process.env.NODE_ENV.trim() : 'development'; // trim для удаления лишних пробелов, если платформа Windows
 
-let buildVersion = (new Date()).getTime();
+// let buildVersion = (new Date()).getTime();
 
-//reloads the browser
-let reload = browserSync.reload;
-function _reload(done){
+// reloads the browser
+const reload = browserSync.reload;
+
+function _reload(done) {
     browserSync.reload();
     done();
 }
@@ -69,7 +70,7 @@ const path = {
         src: {
             html: 'src/default/*.pug',
             sprite: 'src/default/sprite/**/*.svg',
-            js: ['src/default/js/*.js', '!src/default/js/vendors.js',],
+            js: ['src/default/js/*.js', '!src/default/js/vendors.js'],
             jsVendors: ['src/default/js/vendors.js', 'src/default/js/LazyLoadImg.js'],
             images: 'src/default/images/**/*.*',
             fonts: 'src/default/fonts/**/*.*'
@@ -135,7 +136,7 @@ const loadToWeb = {
 gulp.task('default:html', () => {
     return gulp.src(path.default.src.html)
         .pipe(plumber())
-        .pipe(pug({pretty: true}))
+        .pipe(pug({ pretty: true }))
         .pipe(gulp.dest(path.build.html));
 });
 gulp.task('default:html-watch', (done) => {
@@ -151,14 +152,14 @@ gulp.task('default:jsVendors', () => {
         .pipe(uglify())
         .pipe(gulp.dest(path.build.js))
         .pipe(gulpif(loadToWeb.default.js, gulp.dest(path.web.js)))
-        .pipe(reload({stream: true}));
+        .pipe(reload({ stream: true }));
 });
 gulp.task('default:images', () => {
     return gulp.src(path.default.src.images)
         // .pipe(cache(image()))
         .pipe(gulp.dest(path.build.images))
         .pipe(gulpif(loadToWeb.default.images, gulp.dest(path.web.images)))
-        .pipe(reload({stream: true}));
+        .pipe(reload({ stream: true }));
 });
 gulp.task('default:fonts', () => {
     return gulp.src(path.default.src.fonts)
@@ -186,39 +187,39 @@ gulp.task('default:watch', () => {
 
 // Critical
 gulp.task('critical:style', () => {
-    if (NODE_ENV == 'production') {
+    if (NODE_ENV === 'production') {
         return gulp.src(path.critical.src.style)
             .pipe(plumber())
             .pipe(stylus({
                 'include css': true
             }))
-            .pipe(prefixer({browsers: ['last 3 versions']}))
+            .pipe(prefixer({ browsers: ['last 3 versions'] }))
             .pipe(csso({
-                restructure: false,
+                restructure: false
                 // sourceMap: true,
                 // debug: true
             }))
             .pipe(gulp.dest(path.build.css))
-    } else if (NODE_ENV == 'development') {
+    } else if (NODE_ENV === 'development') {
         return gulp.src(path.critical.src.style)
             .pipe(plumber())
             .pipe(sourcemaps.init())
             .pipe(stylus({
                 'include css': true
             }))
-            .pipe(prefixer({browsers: ['last 3 versions']}))
+            .pipe(prefixer({ browsers: ['last 3 versions'] }))
             .pipe(csso({
-                restructure: false,
+                restructure: false
                 // sourceMap: true,
                 // debug: true
             }))
             .pipe(sourcemaps.write('.'))
             .pipe(gulp.dest(path.build.css))
-            .pipe(reload({stream: true, match: '**/*.css'}));
+            .pipe(reload({ stream: true, match: '**/*.css' }));
     }
 });
 gulp.task('critical:js', () => {
-    if (NODE_ENV == 'production') {
+    if (NODE_ENV === 'production') {
         return gulp.src(path.critical.src.js)
             .pipe(rigger())
             .pipe(babel({
@@ -227,7 +228,7 @@ gulp.task('critical:js', () => {
             .pipe(uglify())
             .pipe(gulp.dest(path.build.js))
             .pipe(gulpif(loadToWeb.critical.js, gulp.dest(path.web.js)));
-    } else if (NODE_ENV == 'development') {
+    } else if (NODE_ENV === 'development') {
         return gulp.src(path.critical.src.js)
             .pipe(rigger())
             // .pipe(babel({
@@ -235,7 +236,7 @@ gulp.task('critical:js', () => {
             // }))
             .pipe(gulp.dest(path.build.js))
             .pipe(gulpif(loadToWeb.critical.js, gulp.dest(path.web.js)))
-            .pipe(reload({stream: true}));
+            .pipe(reload({ stream: true }));
     }
 });
 gulp.task('critical:build',
@@ -250,21 +251,20 @@ gulp.task('critical:watch', () => {
 });
 
 // Main site
-if (NODE_ENV == 'development') {
-    // complete trees
-    var changedTplFile = null;
-}
+let changedTplFile = null;
+
 gulp.task('main:html', () => {
-    if (NODE_ENV == 'production') {
+    if (NODE_ENV === 'production') {
         return gulp.src(path.main.src.html)
             .pipe(plumber())
-            .pipe(pug({pretty: false}))
+            .pipe(pug({ pretty: false }))
             .pipe(inlinesource({
                 rootpath: 'build/'
             }))
             .pipe(gulp.dest(path.build.html));
-    } else if (NODE_ENV == 'development') {
-        var pathsTree = getPathsTree(path.main.src.html);
+    } else if (NODE_ENV === 'development') {
+        const pathsTree = getPathsTree(path.main.src.html);
+
         return gulp.src(path.main.src.html)
             .pipe(plumber())
             .pipe(filter((file) => {
@@ -272,19 +272,20 @@ gulp.task('main:html', () => {
                 // страницу дальше в поток, попутно выводя сообщение в консоль для контроля
                 if (changedTplFile) {
                     const changed = changedTplFile;
+
                     // console.log(changed);
                     // console.log(pathsTree);
-                    if (pathsTree[file.relative].indexOf(changed) != -1) {
+                    if (pathsTree[file.relative].indexOf(changed) !== -1) {
                         // console.log(file.relative);
                         console.log('>> ' + `Compiling: ${file.relative}`);
                         return true;
                     }
                 }
-    
+
                 // Иначе отбрасываем страницу
                 return false;
             }))
-            .pipe(pug({pretty: true}))
+            .pipe(pug({ pretty: true }))
             .pipe(gulp.dest(path.build.html));
     }
 });
@@ -299,74 +300,74 @@ gulp.task('main:spriteSvg', () => {
         .pipe(svgmin())
         .pipe(cheerio({
             run: ($) => {
-            //     $('[fill]').removeAttr('fill');
-            //     $('[style]').removeAttr('style');
+                //     $('[fill]').removeAttr('fill');
+                //     $('[style]').removeAttr('style');
                 $('style').remove();
                 $('[class]').removeAttr('class');
             },
-            parserOptions: {xmlMode: true}
+            parserOptions: { xmlMode: true }
         }))
         .pipe(replace('&gt;', '>'))
         .pipe(svgSprite({
-                mode: {
-                    symbol: {
-                        dest: "",
-                        sprite: "sprite.svg",
-                        render: {
-                            styl: {
-                                dest: "sprite.styl",
-                                template: "src/handlebars/sprite.styl"
-                            }
+            mode: {
+                symbol: {
+                    dest: '',
+                    sprite: 'sprite.svg',
+                    render: {
+                        styl: {
+                            dest: 'sprite.styl',
+                            template: 'src/handlebars/sprite.styl'
                         }
                     }
-                },
-                shape: {
-                    id: {
-                        generator: "icon-%s"
-                    }
-                },
-                svg: {
-                    xmlDeclaration: false,
-                    rootAttributes: {
-                        width: 0,
-                        height: 0,
-                        style: "position:absolute;"
-                    },
-                    namespaceClassnames: false
                 }
+            },
+            shape: {
+                id: {
+                    generator: 'icon-%s'
+                }
+            },
+            svg: {
+                xmlDeclaration: false,
+                rootAttributes: {
+                    width: 0,
+                    height: 0,
+                    style: 'position:absolute;'
+                },
+                namespaceClassnames: false
             }
+        }
         ))
         .pipe(gulp.dest(path.main.src.styles))
         .pipe(gulp.dest(path.build.images));
 });
 gulp.task('main:style', () => {
-    if (NODE_ENV == 'production') {
+    if (NODE_ENV === 'production') {
         return gulp.src(path.main.src.style)
             .pipe(plumber())
             .pipe(stylus({
                 'include css': true
             }))
-            .pipe(prefixer({browsers: ['last 3 versions']}))
+            .pipe(prefixer({ browsers: ['last 3 versions'] }))
             .pipe(csso({
                 restructure: false
             }))
             .pipe(gulp.dest(path.build.css))
             .pipe(gulpif(loadToWeb.main.css, gulp.dest(path.web.css)))
-    } else if (NODE_ENV == 'development') {
+    } else if (NODE_ENV === 'development') {
         return gulp.src(path.main.src.style)
             .pipe(plumber())
             .pipe(sourcemaps.init())
             .pipe(stylus({
                 'include css': true
             }))
-            .pipe(prefixer({browsers: ['last 3 versions']}))
+            .pipe(prefixer({ browsers: ['last 3 versions'] }))
             .pipe(csso({
                 restructure: false
             }))
             .pipe(sourcemaps.write('.'))
             .pipe(gulp.dest(path.build.css))
             .pipe(gulpif(loadToWeb.main.css, gulp.dest(path.web.css)))
-            .pipe(reload({stream: true, match: '**/*.css'}));
+            .pipe(reload({ stream: true, match: '**/*.css' }));
     }
 });
 
@@ -375,22 +376,19 @@ gulp.task('main:script', (done) => {
     function onComplete(error, stats) {
         if (error) { // кажется еще не сталкивался с этой ошибкой
             onError(error);
-        } else if ( stats.hasErrors() ) { // ошибки в самой сборке, к примеру "не удалось найти модуль по заданному пути"
+        } else if (stats.hasErrors()) { // ошибки в самой сборке, к примеру "не удалось найти модуль по заданному пути"
             onError(stats.toString(statsLog));
         } else {
             onSuccess(stats.toString(statsLog));
         }
     }
     function onError(error) {
-        let formatedError = new PluginError('webpack', error);
-        notifier.notify({ // чисто чтобы сразу узнать об ошибке
-            title: `Error: ${formatedError.plugin}`,
-            message: formatedError.message
-        });
+        const formatedError = new PluginError('webpack', error);
+
         done(formatedError);
     }
     function onSuccess(detailInfo) {
-        if (NODE_ENV == 'development') {
+        if (NODE_ENV === 'development') {
             log('[webpack]', detailInfo);
             reload();
         }
@@ -456,17 +454,17 @@ gulp.task('build',
 );
 
 // Server config
-let config = {
+const config = {
     server: {
-        baseDir: "./build"
+        baseDir: './build'
     },
     open: false,
     tunnel: false,
     host: 'localhost',
     port: 9002,
-    logPrefix: "frontend_dev",
+    logPrefix: 'frontend_dev',
     notify: false,
-    reloadDelay: 100,
+    reloadDelay: 100
 };
 
 // Run server listen
