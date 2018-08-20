@@ -1,5 +1,5 @@
 # Frontend Kit
-### PUG(html) + Stylus(css) + JS(Babel) + React
+### PUG(html) + Stylus(css) + JS(Babel)
 ## Installing:
 
 ``` console
