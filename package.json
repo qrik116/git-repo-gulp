@@ -1,11 +1,11 @@
 {
   "name": "gulp_boilerplate",
-  "version": "5.1.2",
+  "version": "1.0.0",
   "description": "Frontend Kit PUG(html) + Stylus(css) + JS(Babel)",
   "main": "index.html",
   "scripts": {
-    "start": "set NODE_ENV=development && gulp",
-    "build": "set NODE_ENV=production && gulp build",
+    "start": "cross-env NODE_ENV=development gulp",
+    "build": "cross-env NODE_ENV=production gulp build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -24,6 +24,7 @@
     "babel-preset-stage-0": "^6.24.1",
     "babelify": "8.0.0",
     "bootstrap-styl": "5.0.8",
+    "cross-env": "^5.2.0",
     "browser-sync": "2.24.4",
     "browserify": "^16.2.0",
     "gulp": "next",
