@@ -234,6 +234,7 @@ gulp.task('critical:watch', () => {
 
 // Main site
 let changedTplFile = null;
+let firstStart = true;
 
 gulp.task('main:html', () => {
     if (NODE_ENV === 'production') {
@@ -245,6 +246,15 @@ gulp.task('main:html', () => {
             }))
             .pipe(gulp.dest(path.build.html));
     } else if (NODE_ENV === 'development') {
+        if (firstStart) {
+            firstStart = false;
+
+            return gulp.src(path.main.src.html)
+                .pipe(plumber())
+                .pipe(pug({ pretty: true }))
+                .pipe(gulp.dest(path.build.html));
+        }
+
         const pathsTree = getPathsTree(path.main.src.html);
 
         return gulp.src(path.main.src.html)
